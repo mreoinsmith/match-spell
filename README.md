@@ -1,66 +1,44 @@
-🐾 Animal Match & Spell
-A fun, interactive, and educational web-based game designed for young learners (ages 3-6) to practice spelling and animal recognition. This project is a single-file HTML application that combines visual matching with letter sequencing.
+# 🐾 Animal Match & Spell
 
-🚀 Overview
-Animal Match & Spell helps children develop early literacy skills by:
+A fun, interactive, and educational web-based game designed to help young learners practice animal recognition and spelling. This project is a lightweight, single-file HTML application that works in any modern browser.
 
-Identifying different animals through high-quality visuals.
+---
 
-Dragging and dropping letters to spell animal names.
+## 🚀 Features
 
-Matching animal icons to their corresponding words.
+* **Interactive Drag-and-Drop:** Simple mechanics designed for early learners to practice fine motor skills and spelling.
+* **Visual Learning:** Uses vibrant animal imagery to associate words with real-world creatures.
+* **Instant Feedback:** Provides immediate visual cues when letters are placed correctly.
+* **Single-File Build:** No complex installation—just open the HTML file and play.
+* **Responsive Design:** Works on desktops, tablets, and mobile browsers.
 
-Reinforcing vowel and consonant recognition.
+## 🛠️ Technology Stack
 
-✨ Features
-Interactive Gameplay: Simple drag-and-drop or click-to-select mechanics suitable for small children.
+* **HTML5:** Structure and content.
+* **CSS3:** Layout and child-friendly styling.
+* **JavaScript (Vanilla):** Game logic, event handling, and spelling validation.
 
-Educational Content: Focuses on animal vocabulary, first letters, and vowel sounds.
+## 🕹️ How to Play
 
-Instant Feedback: Provides immediate visual or auditory cues when a word is spelled correctly.
+1.  **View the Image:** Look at the animal displayed on the screen.
+2.  **Spell the Word:** Select the letters in the correct order to complete the animal's name.
+3.  **Match:** Drag the correct labels to the corresponding animal icons.
+4.  **Win:** Complete the sequence to finish the level!
 
-No Installation Required: Runs directly in any modern web browser.
+## 📂 Installation & Usage
 
-Clean UI: Child-friendly design with bright colors and easy-to-read fonts.
+No server or installation is required.
 
-🛠️ Built With
-HTML5: Semantic structure for the game layout.
+1.  **Clone the repository:**
+    ```bash
+    git clone [https://github.com/mreoinsmith/match-spell.git](https://github.com/mreoinsmith/match-spell.git)
+    ```
+2.  **Open the game:**
+    Navigate to the folder and open `animal-game.html` in your favorite web browser.
 
-CSS3: Responsive styling and fun animations.
+## 📝 License
 
-JavaScript: Game logic, win conditions, and interactivity.
+This project is open-source. Feel free to use, modify, and distribute it for educational purposes.
 
-🕹️ Getting Started
-To play the game locally:
-
-Clone the repository:
-
-Bash
-
-git clone https://github.com/mreoinsmith/match-spell.git
-Navigate to the file: Open the folder and locate animal-game.html.
-
-Run the game: Simply double-click animal-game.html to open it in your preferred web browser (Chrome, Firefox, Safari, etc.).
-
-📖 How to Play
-Select an Animal: Look at the picture or shadow provided.
-
-Match/Spell: Use the available letters to fill in the blanks for the animal's name.
-
-Win: Complete all animals to see your score or a "Well Done!" message!
-
-🤝 Contributing
-Contributions are welcome! If you'd like to add more animals, improve the CSS, or add sound effects:
-
-Fork the Project.
-
-Create your Feature Branch (git checkout -b feature/AmazingFeature).
-
-Commit your Changes (git commit -m 'Add some AmazingFeature').
-
-Push to the Branch (git push origin feature/AmazingFeature).
-
-Open a Pull Request.
-
-📄 License
-Distributed under the MIT License. See LICENSE for more information.
+---
+*Developed by [mreoinsmith](https://github.com/mreoinsmith)*
