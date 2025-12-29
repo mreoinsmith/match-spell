@@ -1,700 +1,369 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Mega Match & Spell</title>
-    <style>
-        /* --- UNIVERSAL CSS RESET & VARIABLES --- */
-        :root {
-            --primary: #4fc3f7;
-            --primary-dark: #0288d1;
-            --accent: #ff7043;
-            --bg-gradient: linear-gradient(135deg, #e0f7fa 0%, #fff9c4 100%);
-            --shadow-soft: 0 10px 25px rgba(0,0,0,0.15);
-            --font-main: 'Comic Sans MS', 'Chalkboard SE', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-        }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Mega Match & Spell</title>
 
-        *, *::before, *::after {
-            box-sizing: border-box;
-        }
+<style>
+/* ================= VARIABLES & RESET ================= */
+:root {
+    --primary: #4fc3f7;
+    --primary-dark: #0288d1;
+    --accent: #ff7043;
+    --bg-gradient: linear-gradient(135deg, #e0f7fa 0%, #fff9c4 100%);
+    --shadow-soft: 0 10px 25px rgba(0,0,0,0.15);
+    --font-main: 'Comic Sans MS', 'Chalkboard SE', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; height: 100%; }
 
-        html, body {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
-        }
+body {
+    font-family: var(--font-main);
+    background: var(--bg-gradient);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
 
-        body {
-            font-family: var(--font-main);
-            background: var(--bg-gradient);
-            background-attachment: fixed;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center; /* Vertical centering */
-            min-height: 100dvh;
-            padding: 20px;
-            color: #333;
-            -webkit-font-smoothing: antialiased;
-        }
+/* ================= SCREENS ================= */
+.game-wrapper { width: 100%; max-width: 650px; }
+.screen {
+    display: none;
+    background: white;
+    padding: 25px;
+    border-radius: 25px;
+    border: 6px solid var(--primary);
+    box-shadow: var(--shadow-soft);
+    animation: slideIn .3s ease-out;
+}
+.screen.active { display: block; }
 
-        /* --- CONTAINER / SCREEN STYLES --- */
-        .game-wrapper {
-            width: 100%;
-            max-width: 650px;
-            margin: auto;
-            position: relative;
-        }
+/* ================= TYPOGRAPHY ================= */
+h1 { color: var(--accent); margin: 0 0 10px; }
+.subtitle { color: #78909c; margin-top: 0; }
+h3 { margin: 20px 0 10px; color: #546e7a; }
 
-        .screen {
-            background-color: #ffffff;
-            width: 100%;
-            padding: 25px;
-            border-radius: 25px;
-            box-shadow: var(--shadow-soft);
-            text-align: center;
-            border: 6px solid var(--primary);
-            display: none;
-            animation: slideIn 0.3s ease-out;
-            margin-bottom: 20px;
-        }
+/* ================= MENU ================= */
+.difficulty-row {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+.diff-btn {
+    flex: 1 1 45%;
+    padding: 12px;
+    border-radius: 12px;
+    border: 2px solid #c5e1a5;
+    background: #f1f8e9;
+    cursor: pointer;
+    font-weight: bold;
+}
+.diff-btn.selected {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary-dark);
+}
+.menu-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px,1fr));
+    gap: 12px;
+}
+.cat-btn {
+    padding: 15px;
+    border-radius: 15px;
+    border: none;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+}
+.cat-btn span { font-size: 2rem; display: block; }
+.c-animals { background:#ffca28; }
+.c-food { background:#ef5350; }
+.c-vehicles { background:#5c6bc0; }
+.c-space { background:#37474f; }
+.c-weather { background:#42a5f5; }
+.c-emotions { background:#66bb6a; }
 
-        .screen.active {
-            display: block;
-        }
+/* ================= GAME ================= */
+.header {
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+.back-btn {
+    background:#eceff1;
+    border:none;
+    padding:8px 16px;
+    border-radius:8px;
+    cursor:pointer;
+}
+.score-box {
+    background:#fff9c4;
+    padding:6px 14px;
+    border-radius:12px;
+}
+.emoji-display {
+    font-size:90px;
+    margin:15px 0 25px;
+    user-select:none;
+    will-change: transform;
+}
+.slots-container, .tiles-container {
+    display:flex;
+    justify-content:center;
+    flex-wrap:wrap;
+    gap:8px;
+    margin-bottom:25px;
+}
+.slot {
+    width:48px;
+    height:58px;
+    background:#eee;
+    border-bottom:4px solid #bdbdbd;
+    border-radius:10px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:28px;
+    cursor:pointer;
+}
+.slot.filled {
+    background:#fff;
+    border-bottom-color:var(--primary-dark);
+}
+.slot.active {
+    outline:2px solid #ffca28;
+}
+.tile {
+    width:48px;
+    height:58px;
+    background:#ffca28;
+    border:none;
+    border-bottom:4px solid #ff8f00;
+    border-radius:10px;
+    font-size:26px;
+    cursor:pointer;
+}
+.tile.used { opacity:0; pointer-events:none; }
 
-        /* --- TYPOGRAPHY --- */
-        h1 {
-            color: var(--accent);
-            font-size: 2rem;
-            margin: 0 0 10px 0;
-            line-height: 1.2;
-        }
-        
-        p.subtitle {
-            margin-top: 0;
-            color: #78909c;
-            font-size: 0.9rem;
-        }
+.controls {
+    display:flex;
+    gap:20px;
+    justify-content:center;
+}
+.btn {
+    padding:12px 25px;
+    border:none;
+    border-radius:50px;
+    color:white;
+    font-weight:bold;
+    cursor:pointer;
+}
+.btn-reset { background:#ffb74d; }
+.btn-skip { background:#90a4ae; }
 
-        h3 {
-            color: #546e7a;
-            margin: 20px 0 10px 0;
-            font-size: 1.1rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
+.message { min-height:25px; font-size:1.2rem; font-weight:bold; }
 
-        /* --- MENU: DIFFICULTY BUTTONS (MULTI-SELECT) --- */
-        .difficulty-row {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            flex-wrap: wrap;
-            margin-bottom: 20px;
-        }
-
-        .diff-btn {
-            flex: 1 1 45%;
-            padding: 12px 10px;
-            background: #f1f8e9;
-            border: 2px solid #c5e1a5;
-            border-radius: 12px;
-            cursor: pointer;
-            font-weight: bold;
-            color: #558b2f;
-            transition: all 0.2s;
-            font-size: 0.95rem;
-            font-family: inherit;
-            position: relative;
-        }
-
-        /* Selected State */
-        .diff-btn.selected {
-            background: #4fc3f7;
-            color: white;
-            border-color: #039be5;
-            box-shadow: 0 4px 0 #0277bd;
-            transform: translateY(-2px);
-        }
-        
-        /* Checkmark indicator for selected items */
-        .diff-btn.selected::after {
-            content: "✓";
-            position: absolute;
-            top: 5px;
-            right: 8px;
-            font-size: 1rem;
-            color: #fff;
-        }
-
-        /* --- MENU: CATEGORY GRID --- */
-        .menu-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-            gap: 12px;
-        }
-
-        .cat-btn {
-            padding: 15px 10px;
-            border: none;
-            border-radius: 15px;
-            cursor: pointer;
-            font-family: inherit;
-            font-weight: bold;
-            color: white;
-            font-size: 1rem;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 5px;
-            transition: transform 0.1s;
-            box-shadow: 0 4px 0 rgba(0,0,0,0.15);
-        }
-
-        .cat-btn:active { transform: scale(0.96); box-shadow: none; }
-        .cat-btn span { font-size: 2rem; display: block; margin-bottom: 5px; }
-
-        /* Category Colors */
-        .c-animals { background: #ffca28; }
-        .c-food { background: #ef5350; }
-        .c-vehicles { background: #5c6bc0; }
-        .c-space { background: #37474f; }
-        .c-weather { background: #42a5f5; }
-        .c-emotions { background: #66bb6a; }
-
-        /* --- GAMEPLAY UI --- */
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-            font-weight: bold;
-            color: #555;
-        }
-
-        .back-btn {
-            background: #eceff1;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: bold;
-            color: #455a64;
-            font-family: inherit;
-        }
-
-        .score-box {
-            background: #fff9c4;
-            padding: 6px 14px;
-            border-radius: 12px;
-            box-shadow: 0 2px 0 #fbc02d;
-        }
-
-        .emoji-display {
-            font-size: 90px;
-            margin: 10px 0 25px 0;
-            line-height: 1;
-            filter: drop-shadow(0 5px 5px rgba(0,0,0,0.1));
-            user-select: none;
-        }
-
-        /* --- SAFARI FIX: FLEX CENTERING --- */
-        /* Answer Slots */
-        .slots-container {
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin: 0 auto 30px auto; /* Auto margin fixes some centering issues */
-            min-height: 60px;
-            max-width: 100%; /* Prevent overflow */
-        }
-
-        .slot {
-            width: 48px;
-            height: 58px;
-            background-color: #eeeeee;
-            border-bottom: 4px solid #bdbdbd;
-            border-radius: 10px;
-            font-size: 28px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            color: #333;
-            cursor: pointer;
-            transition: background-color 0.2s;
-            flex-shrink: 0; /* Prevent squishing */
-        }
-
-        .slot.filled {
-            background-color: #ffffff;
-            border-bottom: 4px solid var(--primary-dark);
-            color: var(--primary-dark);
-            transform: translateY(-2px);
-        }
-
-        .slot.active {
-            background-color: #fffde7;
-            border: 2px solid #ffca28;
-            box-shadow: 0 0 8px #ffca28;
-        }
-
-        /* Draggable/Clickable Tiles - Safari Fix */
-        .tiles-container {
-            display: flex;
-            justify-content: center; /* Main centering logic */
-            flex-wrap: wrap;
-            gap: 10px;
-            margin: 0 auto 25px auto; /* Auto margins */
-            min-height: 60px;
-            width: 100%; /* Ensure full width available */
-        }
-
-        .tile {
-            width: 48px;
-            height: 58px;
-            background-color: #ffca28;
-            color: #3e2723;
-            border: none;
-            border-bottom: 4px solid #ff8f00;
-            border-radius: 10px;
-            font-size: 26px;
-            font-weight: bold;
-            cursor: pointer;
-            font-family: inherit;
-            touch-action: manipulation;
-            flex-shrink: 0; /* Prevent shrinking */
-            
-            /* Explicit Flex alignment for Safari internals */
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .tile:active { transform: translateY(4px); border-bottom: 0; }
-        .tile.used { opacity: 0; pointer-events: none; }
-
-        /* Controls */
-        .controls {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-        }
-
-        .btn {
-            padding: 12px 25px;
-            font-size: 1rem;
-            border: none;
-            border-radius: 50px;
-            cursor: pointer;
-            font-weight: bold;
-            color: white;
-            font-family: inherit;
-            box-shadow: 0 4px 0 rgba(0,0,0,0.1);
-        }
-        
-        .btn:active { transform: translateY(2px); box-shadow: none; }
-        .btn-reset { background-color: #ffb74d; }
-        .btn-skip { background-color: #90a4ae; }
-
-        .message {
-            margin-top: 15px;
-            min-height: 25px;
-            font-size: 1.2rem;
-            font-weight: bold;
-        }
-        .correct-text { color: #2e7d32; }
-        .error-msg { color: #d32f2f; display: none; margin-top: 10px; font-weight: bold; }
-
-        /* --- ANIMATIONS --- */
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        @keyframes pop {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.2); }
-            100% { transform: scale(1); }
-        }
-        .pop-anim { animation: pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-
-        /* --- MEDIA QUERIES --- */
-        @media (max-width: 480px) {
-            .screen { padding: 15px; }
-            h1 { font-size: 1.6rem; }
-            
-            .emoji-display { font-size: 70px; margin-bottom: 15px; }
-            
-            .slot, .tile {
-                width: 40px;
-                height: 50px;
-                font-size: 22px;
-                border-bottom-width: 3px;
-            }
-            
-            .cat-btn span { font-size: 1.5rem; }
-            .cat-btn { font-size: 0.9rem; }
-            
-            .diff-btn { font-size: 0.85rem; padding: 10px 5px; }
-        }
-
-    </style>
+/* ================= ANIMATIONS ================= */
+@keyframes slideIn {
+    from { opacity:0; transform:translateY(20px); }
+    to { opacity:1; transform:none; }
+}
+@keyframes pop {
+    50% { transform:scale(1.2); }
+}
+.pop-anim { animation: pop .4s ease; }
+</style>
 </head>
-<body>
 
+<body>
 <div class="game-wrapper">
 
-    <div id="menuScreen" class="screen active">
-        <h1>✨ Match & Spell ✨</h1>
-        <p class="subtitle">Select one or more levels to play!</p>
-        
-        <h3>1. Pick Levels (Multi-Select)</h3>
-        <div class="difficulty-row">
-            <button class="diff-btn selected" data-min="0" data-max="3" onclick="toggleDifficulty(this)">
-                Tiny<br>(2-3)
-            </button>
-            <button class="diff-btn" data-min="3" data-max="5" onclick="toggleDifficulty(this)">
-                Little<br>(3-5)
-            </button>
-            <button class="diff-btn" data-min="5" data-max="7" onclick="toggleDifficulty(this)">
-                Big<br>(5-7)
-            </button>
-            <button class="diff-btn" data-min="7" data-max="20" onclick="toggleDifficulty(this)">
-                Super<br>(7+)
-            </button>
-        </div>
+<!-- ================= MENU ================= -->
+<div id="menuScreen" class="screen active">
+    <h1>✨ Match & Spell ✨</h1>
+    <p class="subtitle">Select one or more levels</p>
 
-        <h3>2. Pick Topic</h3>
-        <div class="menu-grid">
-            <button class="cat-btn c-animals" onclick="startGame('animals')"><span>🦁</span>Animals</button>
-            <button class="cat-btn c-food" onclick="startGame('food')"><span>🍕</span>Food</button>
-            <button class="cat-btn c-vehicles" onclick="startGame('vehicles')"><span>🚀</span>Go!</button>
-            <button class="cat-btn c-space" onclick="startGame('space')"><span>🪐</span>Space</button>
-            <button class="cat-btn c-weather" onclick="startGame('weather')"><span>🌧️</span>Sky</button>
-            <button class="cat-btn c-emotions" onclick="startGame('emotions')"><span>😊</span>Feelings</button>
-        </div>
-
-        <div id="menuError" class="error-msg">Please select at least one level and try again!</div>
+    <h3>Levels</h3>
+    <div class="difficulty-row">
+        <button class="diff-btn selected" data-min="0" data-max="3">Tiny</button>
+        <button class="diff-btn" data-min="3" data-max="5">Little</button>
+        <button class="diff-btn" data-min="5" data-max="7">Big</button>
+        <button class="diff-btn" data-min="7" data-max="20">Super</button>
     </div>
 
-    <div id="gameScreen" class="screen">
-        <div class="header">
-            <button class="back-btn" onclick="goToMenu()">« Back</button>
-            <span id="gameTitle" style="text-transform: uppercase;">TOPIC</span>
-            <div class="score-box">⭐ <span id="scoreVal">0</span></div>
-        </div>
-
-        <div id="emoji" class="emoji-display">🦁</div>
-
-        <div class="slots-container" id="slotsArea"></div>
-        <div class="tiles-container" id="tilesArea"></div>
-
-        <div class="controls">
-            <button class="btn btn-reset" onclick="resetRound()">Reset ↺</button>
-            <button class="btn btn-skip" onclick="skipItem()">Skip ⏩</button>
-        </div>
-
-        <div id="message" class="message"></div>
+    <h3>Topic</h3>
+    <div class="menu-grid">
+        <button class="cat-btn c-animals" data-cat="animals"><span>🦁</span>Animals</button>
+        <button class="cat-btn c-food" data-cat="food"><span>🍕</span>Food</button>
+        <button class="cat-btn c-vehicles" data-cat="vehicles"><span>🚀</span>Go</button>
+        <button class="cat-btn c-space" data-cat="space"><span>🪐</span>Space</button>
+        <button class="cat-btn c-weather" data-cat="weather"><span>🌧️</span>Sky</button>
+        <button class="cat-btn c-emotions" data-cat="emotions"><span>😊</span>Feelings</button>
     </div>
+
+    <div id="menuError" style="color:red; display:none; margin-top:10px;">
+        Please select at least one level
+    </div>
+</div>
+
+<!-- ================= GAME ================= -->
+<div id="gameScreen" class="screen">
+    <div class="header">
+        <button class="back-btn" id="backBtn">« Back</button>
+        <span id="gameTitle"></span>
+        <div class="score-box">⭐ <span id="scoreVal">0</span></div>
+    </div>
+
+    <div id="emoji" class="emoji-display" aria-live="polite"></div>
+    <div id="slotsArea" class="slots-container"></div>
+    <div id="tilesArea" class="tiles-container"></div>
+
+    <div class="controls">
+        <button class="btn btn-reset" id="resetBtn">Reset</button>
+        <button class="btn btn-skip" id="skipBtn">Skip</button>
+    </div>
+
+    <div id="message" class="message"></div>
+</div>
 
 </div>
 
 <script>
-    // --- DATA LIBRARY ---
-    const data = {
-        animals: [
-            {n:"CAT",e:"🐱"}, {n:"DOG",e:"🐶"}, {n:"PIG",e:"🐷"}, {n:"COW",e:"🐮"}, 
-            {n:"BAT",e:"🦇"}, {n:"FOX",e:"🦊"}, {n:"BEE",e:"🐝"}, {n:"ANT",e:"🐜"},
-            {n:"YAK",e:"🐂"}, {n:"OWL",e:"🦉"}, {n:"BUG",e:"🐛"},
-            {n:"LION",e:"🦁"}, {n:"BEAR",e:"🐻"}, {n:"DUCK",e:"🦆"}, {n:"FROG",e:"🐸"},
-            {n:"FISH",e:"🐠"}, {n:"WOLF",e:"🐺"}, {n:"DEER",e:"🦌"}, {n:"CRAB",e:"🦀"},
-            {n:"BIRD",e:"🐦"}, {n:"WORM",e:"🪱"}, {n:"TIGER",e:"🐯"}, {n:"HORSE",e:"🐴"},
-            {n:"ZEBRA",e:"🦓"}, {n:"SHEEP",e:"🐑"}, {n:"GOAT",e:"🐐"}, {n:"MOUSE",e:"🐭"},
-            {n:"SNAKE",e:"🐍"}, {n:"WHALE",e:"🐳"}, {n:"SHARK",e:"🦈"}, {n:"EAGLE",e:"🦅"},
-            {n:"PANDA",e:"🐼"}, {n:"KOALA",e:"🐨"}, {n:"CAMEL",e:"🐫"},
-            {n:"MONKEY",e:"🐵"}, {n:"RABBIT",e:"🐰"}, {n:"TURTLE",e:"🐢"}, {n:"SPIDER",e:"🕷️"},
-            {n:"DONKEY",e:"🫏"}, {n:"TURKEY",e:"🦃"}, {n:"LIZARD",e:"🦎"}, {n:"PARROT",e:"🦜"},
-            {n:"DOLPHIN",e:"🐬"}, {n:"PENGUIN",e:"🐧"}, {n:"GIRAFFE",e:"🦒"}, {n:"ELEPHANT",e:"🐘"},
-            {n:"KANGAROO",e:"🦘"}, {n:"SQUIRREL",e:"🐿️"}, {n:"GORILLA",e:"🦍"}, {n:"BUTTERFLY",e:"🦋"},
-            {n:"OCTOPUS",e:"🐙"}, {n:"CROCODILE",e:"🐊"}, {n:"FLAMINGO",e:"🦩"}, {n:"DINOSAUR",e:"🦖"}
-        ],
-        food: [
-            {n:"EGG",e:"🥚"}, {n:"PIE",e:"🥧"}, {n:"TEA",e:"🍵"}, {n:"NUT",e:"🥜"}, {n:"JAM",e:"🍯"},
-            {n:"CAKE",e:"🎂"}, {n:"KIWI",e:"🥝"}, {n:"CORN",e:"🌽"}, {n:"PEAR",e:"🍐"},
-            {n:"MILK",e:"🥛"}, {n:"MEAT",e:"🥩"}, {n:"RICE",e:"🍚"}, {n:"SOUP",e:"🍲"},
-            {n:"TACO",e:"🌮"}, {n:"BREAD",e:"🍞"}, {n:"APPLE",e:"🍎"}, {n:"LEMON",e:"🍋"},
-            {n:"SUSHI",e:"🍣"}, {n:"PIZZA",e:"🍕"}, {n:"DONUT",e:"🍩"}, {n:"CANDY",e:"🍬"},
-            {n:"FRUIT",e:"🍇"}, {n:"HONEY",e:"🍯"}, {n:"FRIES",e:"🍟"},
-            {n:"BANANA",e:"🍌"}, {n:"BURGER",e:"🍔"}, {n:"ORANGE",e:"🍊"}, {n:"TOMATO",e:"🍅"},
-            {n:"POTATO",e:"🥔"}, {n:"CARROT",e:"🥕"}, {n:"COOKIE",e:"🍪"}, {n:"CHEESE",e:"🧀"},
-            {n:"HOTDOG",e:"🌭"}, {n:"POPCORN",e:"🍿"}, {n:"CHICKEN",e:"🍗"}, {n:"AVOCADO",e:"🥑"},
-            {n:"NOODLES",e:"🍜"}, {n:"CUPCAKE",e:"🧁"}, {n:"SANDWICH",e:"🥪"}, {n:"CHOCOLATE",e:"🍫"},
-            {n:"STRAWBERRY",e:"🍓"}, {n:"WATERMELON",e:"🍉"}, {n:"SPAGHETTI",e:"🍝"}, {n:"PINEAPPLE",e:"🍍"}
-        ],
-        vehicles: [
-            {n:"BUS",e:"🚌"}, {n:"CAR",e:"🚗"}, {n:"JET",e:"✈️"}, {n:"VAN",e:"🚐"},
-            {n:"TAXI",e:"🚕"}, {n:"BIKE",e:"🚲"}, {n:"BOAT",e:"⛵"}, {n:"SHIP",e:"🚢"},
-            {n:"TRUCK",e:"🚚"}, {n:"TRAIN",e:"🚂"}, {n:"CANOE",e:"🛶"}, {n:"PLANE",e:"✈️"},
-            {n:"METRO",e:"🚇"}, 
-            {n:"ROCKET",e:"🚀"}, {n:"SCOOTER",e:"🛴"}, {n:"TRACTOR",e:"🚜"}, {n:"SAILBOAT",e:"⛵"},
-            {n:"MINIVAN",e:"🚐"}, {n:"AIRPLANE",e:"✈️"}, {n:"AMBULANCE",e:"🚑"}, {n:"FIRETRUCK",e:"🚒"},
-            {n:"POLICECAR",e:"🚓"}, {n:"HELICOPTER",e:"🚁"}, {n:"MOTORCYCLE",e:"🏍️"}, {n:"SUBMARINE",e:"🚢"}
-        ],
-        space: [
-            {n:"SUN",e:"☀️"}, 
-            {n:"MOON",e:"🌙"}, {n:"STAR",e:"⭐"}, {n:"MARS",e:"🟠"}, {n:"UFO",e:"🛸"}, 
-            {n:"EARTH",e:"🌍"}, {n:"ALIEN",e:"👽"}, {n:"COMET",e:"☄️"}, {n:"VENUS",e:"🟡"},
-            {n:"SATURN",e:"🪐"}, {n:"URANUS",e:"🔵"}, {n:"PLANET",e:"🪐"}, {n:"GALAXY",e:"🌌"},
-            {n:"NEBULA",e:"🌫️"}, {n:"ROCKET",e:"🚀"}, {n:"METEOR",e:"🌠"}, {n:"JUPITER",e:"🟤"},
-            {n:"TELESCOPE",e:"🔭"}, {n:"SATELLITE",e:"🛰️"}, {n:"ASTRONAUT",e:"🧑‍🚀"}
-        ],
-        weather: [
-            {n:"SUN",e:"☀️"}, {n:"HOT",e:"🥵"}, {n:"FOG",e:"🌫️"}, {n:"ICE",e:"🧊"},
-            {n:"RAIN",e:"🌧️"}, {n:"SNOW",e:"❄️"}, {n:"WIND",e:"💨"}, {n:"COLD",e:"🥶"},
-            {n:"FIRE",e:"🔥"}, {n:"STORM",e:"⛈️"}, {n:"CLOUD",e:"☁️"}, 
-            {n:"THUNDER",e:"⚡"}, {n:"TORNADO",e:"🌪️"}, {n:"RAINBOW",e:"🌈"}, {n:"UMBRELLA",e:"☂️"},
-            {n:"LIGHTNING",e:"⚡"}, {n:"SNOWFLAKE",e:"❄️"}, {n:"SUNGLASSES",e:"🕶️"}
-        ],
-        emotions: [
-            {n:"SAD",e:"😢"}, {n:"MAD",e:"😡"}, {n:"JOY",e:"😁"}, {n:"ILL",e:"🤢"},
-            {n:"LOVE",e:"😍"}, {n:"COOL",e:"😎"}, {n:"SICK",e:"🤢"}, {n:"CALM",e:"😌"},
-            {n:"HAPPY",e:"😊"}, {n:"ANGRY",e:"😡"}, {n:"TIRED",e:"😴"}, {n:"SILLY",e:"🤪"},
-            {n:"BORED",e:"😐"}, {n:"QUIET",e:"🤫"}, 
-            {n:"SCARED",e:"😱"}, {n:"SHOCKED",e:"😲"}, {n:"SLEEPY",e:"😪"}, {n:"NERVOUS",e:"😬"},
-            {n:"EXCITED",e:"🤩"}, {n:"CONFUSED",e:"😕"}, {n:"SURPRISED",e:"😮"}, {n:"LAUGHING",e:"😂"}
-        ]
-    };
+/* ================= DATA ================= */
+const data = {
+    animals:[{n:"CAT",e:"🐱"},{n:"DOG",e:"🐶"},{n:"LION",e:"🦁"},{n:"ELEPHANT",e:"🐘"}],
+    food:[{n:"PIZZA",e:"🍕"},{n:"APPLE",e:"🍎"},{n:"BANANA",e:"🍌"}],
+    vehicles:[{n:"CAR",e:"🚗"},{n:"BUS",e:"🚌"},{n:"ROCKET",e:"🚀"}],
+    space:[{n:"MOON",e:"🌙"},{n:"STAR",e:"⭐"},{n:"SATURN",e:"🪐"}],
+    weather:[{n:"RAIN",e:"🌧️"},{n:"SNOW",e:"❄️"}],
+    emotions:[{n:"HAPPY",e:"😊"},{n:"SAD",e:"😢"}]
+};
 
-    // --- GAME STATE ---
-    let selectedLevels = []; // Array of objects {min: x, max: y}
-    let currentList = [];
-    let currentItem = {};
-    let filledSlots = []; 
-    let score = 0;
+/* ================= STATE ================= */
+let selectedLevels = [];
+let currentList = [];
+let remainingItems = [];
+let currentItem = null;
+let filledSlots = [];
+let score = 0;
+let roundLocked = false;
 
-    // --- DOM REFERENCES ---
-    const menuScreen = document.getElementById('menuScreen');
-    const gameScreen = document.getElementById('gameScreen');
-    const gameTitle = document.getElementById('gameTitle');
-    const menuError = document.getElementById('menuError');
-    const emojiDiv = document.getElementById("emoji");
-    const slotsArea = document.getElementById("slotsArea");
-    const tilesArea = document.getElementById("tilesArea");
-    const msgDiv = document.getElementById("message");
-    const scoreSpan = document.getElementById("scoreVal");
+/* ================= DOM ================= */
+const menuScreen = document.getElementById("menuScreen");
+const gameScreen = document.getElementById("gameScreen");
+const emojiDiv = document.getElementById("emoji");
+const slotsArea = document.getElementById("slotsArea");
+const tilesArea = document.getElementById("tilesArea");
+const msgDiv = document.getElementById("message");
+const scoreVal = document.getElementById("scoreVal");
 
-    // --- INIT ---
-    // Select first level by default on load
-    document.addEventListener('DOMContentLoaded', () => {
-        const firstBtn = document.querySelector('.diff-btn');
-        updateSelectedLevels();
+/* ================= HELPERS ================= */
+const shuffle = arr => {
+    for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+};
+
+/* ================= MENU ================= */
+document.querySelector(".difficulty-row").addEventListener("click", e => {
+    const btn = e.target.closest(".diff-btn");
+    if (!btn) return;
+    btn.classList.toggle("selected");
+    selectedLevels = [...document.querySelectorAll(".diff-btn.selected")]
+        .map(b => ({min:+b.dataset.min, max:+b.dataset.max}));
+});
+
+document.querySelector(".menu-grid").addEventListener("click", e => {
+    const btn = e.target.closest(".cat-btn");
+    if (!btn) return;
+    startGame(btn.dataset.cat);
+});
+
+/* ================= GAME FLOW ================= */
+function startGame(category) {
+    if (!selectedLevels.length) return;
+    currentList = data[category];
+    remainingItems = shuffle([...currentList]);
+    score = 0;
+    scoreVal.textContent = score;
+    menuScreen.classList.remove("active");
+    gameScreen.classList.add("active");
+    loadNewItem();
+}
+
+function loadNewItem() {
+    roundLocked = false;
+    if (!remainingItems.length) remainingItems = shuffle([...currentList]);
+    currentItem = remainingItems.pop();
+    filledSlots = new Array(currentItem.n.length).fill(null);
+    emojiDiv.textContent = currentItem.e;
+    emojiDiv.classList.remove("pop-anim");
+    requestAnimationFrame(() => emojiDiv.classList.add("pop-anim"));
+    msgDiv.textContent = "";
+    buildUI();
+}
+
+function buildUI() {
+    slotsArea.innerHTML = "";
+    tilesArea.innerHTML = "";
+    currentItem.n.split("").forEach((_,i)=>{
+        const s=document.createElement("div");
+        s.className="slot"+(i===0?" active":"");
+        s.onclick=()=>undoSlot(i);
+        slotsArea.appendChild(s);
     });
-
-    // --- SETTINGS: Multi-Select Logic ---
-    function toggleDifficulty(btn) {
-        btn.classList.toggle('selected');
-        menuError.style.display = 'none';
-        updateSelectedLevels();
-    }
-
-    function updateSelectedLevels() {
-        selectedLevels = [];
-        const btns = document.querySelectorAll('.diff-btn.selected');
-        btns.forEach(btn => {
-            selectedLevels.push({
-                min: parseInt(btn.dataset.min),
-                max: parseInt(btn.dataset.max)
-            });
-        });
-    }
-
-    // --- GAME LOGIC ---
-    function startGame(category) {
-        if (selectedLevels.length === 0) {
-            menuError.innerText = "Please select at least one level!";
-            menuError.style.display = 'block';
-            return;
-        }
-
-        const rawList = data[category];
-        
-        // Filter list: Check if word matches ANY of the selected ranges
-        currentList = rawList.filter(item => {
-            const len = item.n.length;
-            // Returns true if length fits in ANY selected range
-            return selectedLevels.some(range => len >= range.min && len <= range.max);
-        });
-
-        if (currentList.length === 0) {
-            menuError.innerText = "No words found for these levels! Try selecting others.";
-            menuError.style.display = 'block';
-            return;
-        }
-
-        // Setup UI
-        gameTitle.innerText = category;
-        score = 0;
-        scoreSpan.innerText = score;
-
-        // Swap Screens
-        menuScreen.classList.remove('active');
-        gameScreen.classList.add('active');
-        menuError.style.display = 'none';
-
-        loadNewItem();
-    }
-
-    function goToMenu() {
-        gameScreen.classList.remove('active');
-        menuScreen.classList.add('active');
-    }
-
-    // --- ROUND LOGIC ---
-    function loadNewItem() {
-        const randomIndex = Math.floor(Math.random() * currentList.length);
-        currentItem = currentList[randomIndex];
-        filledSlots = new Array(currentItem.n.length).fill(null);
-        
-        emojiDiv.innerText = currentItem.e;
-        emojiDiv.classList.remove("pop-anim");
-        void emojiDiv.offsetWidth; 
-        msgDiv.innerText = "";
-        
-        createLayout();
-    }
-
-    function createLayout() {
-        slotsArea.innerHTML = "";
-        tilesArea.innerHTML = "";
-
-        // Create Slots
-        for (let i = 0; i < currentItem.n.length; i++) {
-            let slot = document.createElement("div");
-            slot.className = "slot";
-            if (i === 0) slot.classList.add("active");
-            slot.onclick = () => undoSlot(i);
-            slotsArea.appendChild(slot);
-        }
-
-        // Create Tiles (Shuffled)
-        let lettersObj = currentItem.n.split("").map((char, index) => {
-            return { char: char, id: `tile-${index}` };
-        });
-        
-        // Fisher-Yates Shuffle
-        for (let i = lettersObj.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [lettersObj[i], lettersObj[j]] = [lettersObj[j], lettersObj[i]];
-        }
-
-        lettersObj.forEach(obj => {
-            let btn = document.createElement("button");
-            btn.className = "tile";
-            btn.innerText = obj.char;
-            btn.id = obj.id;
-            btn.onclick = () => useLetter(obj.id, obj.char);
-            tilesArea.appendChild(btn);
-        });
-    }
-
-    function useLetter(tileId, char) {
-        const emptyIndex = filledSlots.findIndex(item => item === null);
-        if (emptyIndex !== -1) {
-            filledSlots[emptyIndex] = tileId;
-            
-            // Visual Update Slot
-            const slot = slotsArea.children[emptyIndex];
-            slot.innerText = char;
-            slot.classList.add("filled");
-            slot.classList.remove("active");
-
-            // Visual Update Tile
-            document.getElementById(tileId).classList.add("used");
-
-            // Move Highlight
-            if (emptyIndex + 1 < filledSlots.length) {
-                slotsArea.children[emptyIndex + 1].classList.add("active");
-            }
-            checkWin();
-        }
-    }
-
-    function undoSlot(index) {
-        if (filledSlots[index] !== null) {
-            const tileId = filledSlots[index];
-            filledSlots[index] = null;
-
-            const slot = slotsArea.children[index];
-            slot.innerText = "";
-            slot.classList.remove("filled");
-
-            document.getElementById(tileId).classList.remove("used");
-            updateHighlights();
-        }
-    }
-
-    function updateHighlights() {
-        Array.from(slotsArea.children).forEach(s => s.classList.remove("active"));
-        const firstEmpty = filledSlots.findIndex(item => item === null);
-        if (firstEmpty !== -1) slotsArea.children[firstEmpty].classList.add("active");
-    }
-
-    function checkWin() {
-        if (!filledSlots.includes(null)) {
-            let formedWord = "";
-            filledSlots.forEach(id => formedWord += document.getElementById(id).innerText);
-
-            if (formedWord === currentItem.n) {
-                // Correct
-                score++;
-                scoreSpan.innerText = score;
-                msgDiv.className = "message correct-text";
-                msgDiv.innerText = "🌟 Correct! 🌟";
-                emojiDiv.classList.add("pop-anim");
-                
-                // Lock tiles
-                Array.from(document.querySelectorAll(".tile")).forEach(b => b.disabled = true);
-                
-                setTimeout(loadNewItem, 1500);
-            }
-        }
-    }
-
-    function resetRound() {
-        filledSlots.fill(null);
-        Array.from(slotsArea.children).forEach(s => { s.innerText = ""; s.className = "slot"; });
-        Array.from(tilesArea.children).forEach(t => t.classList.remove("used"));
-        updateHighlights();
-    }
-
-    function skipItem() {
-        msgDiv.className = "message";
-        msgDiv.style.color = "#ef6c00";
-        msgDiv.innerText = `It was ${currentItem.n}!`;
-        setTimeout(loadNewItem, 1500);
-    }
-
-    // Keyboard Support
-    document.addEventListener("keydown", (e) => {
-        if (!gameScreen.classList.contains('active')) return;
-        
-        const key = e.key.toUpperCase();
-        if (key === "BACKSPACE") {
-            for (let i = filledSlots.length - 1; i >= 0; i--) {
-                if (filledSlots[i] !== null) { undoSlot(i); break; }
-            }
-        } else if (key.match(/^[A-Z]$/)) {
-            const tiles = Array.from(tilesArea.children);
-            const available = tiles.find(t => t.innerText === key && !t.classList.contains("used"));
-            if (available) useLetter(available.id, key);
-        }
+    shuffle(currentItem.n.split("")).forEach((c,i)=>{
+        const b=document.createElement("button");
+        b.className="tile";
+        b.textContent=c;
+        b.onclick=()=>useLetter(b,c);
+        tilesArea.appendChild(b);
     });
+}
 
+function useLetter(btn,char){
+    if(roundLocked) return;
+    const i=filledSlots.indexOf(null);
+    if(i<0) return;
+    filledSlots[i]=char;
+    slotsArea.children[i].textContent=char;
+    slotsArea.children[i].classList.add("filled");
+    btn.classList.add("used");
+    checkWin();
+}
+
+function undoSlot(i){
+    if(filledSlots[i]==null||roundLocked) return;
+    const char=filledSlots[i];
+    filledSlots[i]=null;
+    slotsArea.children[i].textContent="";
+    slotsArea.children[i].classList.remove("filled");
+    [...tilesArea.children].find(t=>t.textContent===char && t.classList.contains("used"))
+        ?.classList.remove("used");
+}
+
+function checkWin(){
+    if(filledSlots.includes(null)) return;
+    if(filledSlots.join("")===currentItem.n){
+        roundLocked=true;
+        scoreVal.textContent=++score;
+        msgDiv.textContent="🌟 Correct! 🌟";
+        setTimeout(loadNewItem,1500);
+    }
+}
+
+/* ================= CONTROLS ================= */
+document.getElementById("resetBtn").onclick=()=>loadNewItem();
+document.getElementById("skipBtn").onclick=()=>setTimeout(loadNewItem,500);
+document.getElementById("backBtn").onclick=()=>{
+    gameScreen.classList.remove("active");
+    menuScreen.classList.add("active");
+};
 </script>
 </body>
 </html>
