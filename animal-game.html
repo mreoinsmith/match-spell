@@ -1,818 +1,183 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Mega Match & Spell</title>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shape & Color Match</title>
     <style>
-      /* --- CSS Styles --- */
-      :root {
-        --primary: #4fc3f7;
-        --accent: #ff7043;
-        --bg-gradient: linear-gradient(135deg, #e0f7fa 0%, #fff9c4 100%);
-      }
-
-      body {
-        font-family: "Comic Sans MS", "Chalkboard SE", "Arial", sans-serif;
-        background: var(--bg-gradient);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        min-height: 100vh;
-        margin: 0;
-        overflow: hidden;
-        user-select: none;
-      }
-
-      /* --- SCREENS --- */
-      .screen {
-        background-color: #ffffff;
-        width: 95%;
-        max-width: 700px;
-        padding: 20px;
-        border-radius: 30px;
-        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
-        text-align: center;
-        border: 8px solid var(--primary);
-        position: relative;
-        display: none;
-        max-height: 95vh;
-        overflow-y: auto; /* Allow scrolling on small screens if needed */
-      }
-
-      .screen.active {
-        display: block;
-        animation: fadeIn 0.4s ease-out;
-      }
-
-      /* --- MENU STYLES --- */
-      h1 {
-        color: var(--accent);
-        font-size: 2.2rem;
-        margin: 10px 0 20px 0;
-      }
-      h3 {
-        color: #555;
-        margin: 15px 0 10px 0;
-      }
-
-      /* Difficulty Selector */
-      .difficulty-row {
-        display: flex;
-        justify-content: center;
-        gap: 10px;
-        flex-wrap: wrap;
-        margin-bottom: 25px;
-      }
-
-      .diff-btn {
-        padding: 10px 15px;
-        background: #eceff1;
-        border: 2px solid #cfd8dc;
-        border-radius: 15px;
-        cursor: pointer;
-        font-weight: bold;
-        color: #78909c;
-        transition: all 0.2s;
-        flex: 1 1 100px; /* Responsive sizing */
-      }
-
-      .diff-btn.selected {
-        background: #29b6f6;
-        color: white;
-        border-color: #0288d1;
-        transform: scale(1.05);
-        box-shadow: 0 4px 10px rgba(41, 182, 246, 0.4);
-      }
-
-      /* Category Grid */
-      .menu-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-        gap: 15px;
-        padding: 10px;
-      }
-
-      .cat-btn {
-        padding: 20px;
-        font-size: 1.2rem;
-        border: none;
-        border-radius: 20px;
-        cursor: pointer;
-        font-family: inherit;
-        font-weight: bold;
-        color: white;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-        transition: transform 0.2s;
-        box-shadow: 0 5px 0 rgba(0, 0, 0, 0.2);
-      }
-
-      .cat-btn:active {
-        transform: translateY(4px);
-        box-shadow: none;
-      }
-      .cat-btn span {
-        font-size: 2rem;
-      } /* Emoji size */
-
-      /* Category Colors */
-      .c-animals {
-        background-color: #ffca28;
-      }
-      .c-food {
-        background-color: #ef5350;
-      }
-      .c-vehicles {
-        background-color: #5c6bc0;
-      }
-      .c-space {
-        background-color: #263238;
-      }
-      .c-weather {
-        background-color: #42a5f5;
-      }
-      .c-emotions {
-        background-color: #66bb6a;
-      }
-
-      /* --- GAME UI --- */
-      .header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 10px;
-        font-weight: bold;
-        color: #555;
-      }
-
-      .score-box {
-        background: #fff9c4;
-        padding: 5px 15px;
-        border-radius: 15px;
-      }
-
-      .back-btn {
-        background: #eceff1;
-        border: none;
-        padding: 8px 15px;
-        border-radius: 10px;
-        cursor: pointer;
-        font-weight: bold;
-        color: #555;
-      }
-
-      .emoji-display {
-        font-size: 100px;
-        margin: 10px 0 20px 0;
-        filter: drop-shadow(0 5px 5px rgba(0, 0, 0, 0.1));
-        transition: transform 0.3s;
-      }
-
-      /* Slots */
-      .slots-container {
-        display: flex;
-        justify-content: center;
-        gap: 8px;
-        margin-bottom: 25px;
-        min-height: 55px;
-        flex-wrap: wrap;
-      }
-
-      .slot {
-        width: 45px;
-        height: 55px;
-        background-color: #f0f0f0;
-        border-bottom: 4px solid #ccc;
-        border-radius: 10px;
-        font-size: 28px;
-        line-height: 55px;
-        font-weight: bold;
-        color: #333;
-        cursor: pointer;
-      }
-
-      .slot.filled {
-        background-color: #fff;
-        border-bottom: 4px solid #42a5f5;
-        color: #1976d2;
-        transform: translateY(-2px);
-      }
-
-      .slot.active {
-        border: 2px solid #ffca28;
-        background: #fffde7;
-      }
-
-      /* Tiles */
-      .tiles-container {
-        display: flex;
-        justify-content: center;
-        gap: 8px;
-        flex-wrap: wrap;
-        margin-bottom: 20px;
-        min-height: 60px;
-      }
-
-      .tile {
-        width: 45px;
-        height: 55px;
-        background-color: #ffca28;
-        color: #5d4037;
-        border: none;
-        border-bottom: 4px solid #ff8f00;
-        border-radius: 10px;
-        font-size: 26px;
-        font-weight: bold;
-        cursor: pointer;
-        font-family: inherit;
-      }
-
-      .tile:active {
-        transform: translateY(4px);
-        border-bottom-width: 0px;
-      }
-      .tile.used {
-        opacity: 0;
-        pointer-events: none;
-      }
-
-      /* Controls */
-      .controls {
-        display: flex;
-        justify-content: center;
-        gap: 15px;
-      }
-      .btn {
-        padding: 10px 20px;
-        font-size: 16px;
-        border: none;
-        border-radius: 50px;
-        cursor: pointer;
-        font-weight: bold;
-        color: white;
-        font-family: inherit;
-      }
-      .btn-skip {
-        background-color: #78909c;
-      }
-      .btn-reset {
-        background-color: #ffa726;
-      }
-
-      .message {
-        margin-top: 15px;
-        height: 25px;
-        font-size: 1.2rem;
-        font-weight: bold;
-      }
-      .correct-text {
-        color: #2e7d32;
-      }
-      .error-message {
-        color: #d32f2f;
-        font-size: 1rem;
-        margin-top: 10px;
-        display: none;
-      }
-
-      /* Animation */
-      @keyframes fadeIn {
-        from {
-          opacity: 0;
-          transform: translateY(10px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-      @keyframes pop {
-        0% {
-          transform: scale(1);
-        }
-        50% {
-          transform: scale(1.3);
-        }
-        100% {
-          transform: scale(1);
-        }
-      }
-      .pop-anim {
-        animation: pop 0.4s;
-      }
-    </style>
-  </head>
-  <body>
-    <div id="menuScreen" class="screen active">
-      <h1>✨ Match & Spell ✨</h1>
-
-      <h3>1. Pick Your Level</h3>
-      <div class="difficulty-row">
-        <button class="diff-btn selected" onclick="setDifficulty(0, 3, this)">
-          Tiny<br />(2-3 Letters)
-        </button>
-        <button class="diff-btn" onclick="setDifficulty(3, 5, this)">
-          Little<br />(3-5 Letters)
-        </button>
-        <button class="diff-btn" onclick="setDifficulty(5, 7, this)">
-          Big<br />(5-7 Letters)
-        </button>
-        <button class="diff-btn" onclick="setDifficulty(7, 20, this)">
-          Super<br />(7+ Letters)
-        </button>
-      </div>
-
-      <h3>2. Pick a Topic</h3>
-      <div class="menu-grid">
-        <button class="cat-btn c-animals" onclick="startGame('animals')">
-          <span>🦁</span> Animals
-        </button>
-        <button class="cat-btn c-food" onclick="startGame('food')">
-          <span>🍕</span> Food
-        </button>
-        <button class="cat-btn c-vehicles" onclick="startGame('vehicles')">
-          <span>🚀</span> Vehicles
-        </button>
-        <button class="cat-btn c-space" onclick="startGame('space')">
-          <span>🪐</span> Space
-        </button>
-        <button class="cat-btn c-weather" onclick="startGame('weather')">
-          <span>🌧️</span> Weather
-        </button>
-        <button class="cat-btn c-emotions" onclick="startGame('emotions')">
-          <span>😊</span> Emotions
-        </button>
-      </div>
-
-      <div id="menuError" class="error-message">
-        No words of that length found in this category! Try a different level.
-      </div>
-    </div>
-
-    <div id="gameScreen" class="screen">
-      <div class="header">
-        <button class="back-btn" onclick="goToMenu()">« Back</button>
-        <span id="gameTitle">Topic</span>
-        <div class="score-box">⭐ <span id="scoreVal">0</span></div>
-      </div>
-
-      <div id="emoji" class="emoji-display">🦁</div>
-
-      <div class="slots-container" id="slotsArea"></div>
-      <div class="tiles-container" id="tilesArea"></div>
-
-      <div class="controls">
-        <button class="btn btn-reset" onclick="resetRound()">Reset ↺</button>
-        <button class="btn btn-skip" onclick="skipItem()">Skip ⏩</button>
-      </div>
-
-      <div id="message" class="message"></div>
-    </div>
-
-    <script>
-      // --- LARGE DATA LIBRARY ---
-      // Organized by Category. The code will filter by length automatically.
-      const data = {
-        animals: [
-          // Short (2-3)
-          { n: "CAT", e: "🐱" },
-          { n: "DOG", e: "🐶" },
-          { n: "PIG", e: "🐷" },
-          { n: "COW", e: "🐮" },
-          { n: "BAT", e: "🦇" },
-          { n: "FOX", e: "🦊" },
-          { n: "BEE", e: "🐝" },
-          { n: "ANT", e: "🐜" },
-          { n: "YAK", e: "🐂" },
-          { n: "OWL", e: "🦉" },
-          { n: "BUG", e: "🐛" },
-          // Med (3-5)
-          { n: "LION", e: "🦁" },
-          { n: "BEAR", e: "🐻" },
-          { n: "DUCK", e: "🦆" },
-          { n: "FROG", e: "🐸" },
-          { n: "FISH", e: "🐠" },
-          { n: "WOLF", e: "🐺" },
-          { n: "DEER", e: "🦌" },
-          { n: "CRAB", e: "🦀" },
-          { n: "BIRD", e: "🐦" },
-          { n: "WORM", e: "🪱" },
-          { n: "TIGER", e: "🐯" },
-          { n: "HORSE", e: "🐴" },
-          { n: "ZEBRA", e: "🦓" },
-          { n: "SHEEP", e: "🐑" },
-          { n: "GOAT", e: "🐐" },
-          { n: "MOUSE", e: "🐭" },
-          { n: "SNAKE", e: "🐍" },
-          { n: "WHALE", e: "🐳" },
-          { n: "SHARK", e: "🦈" },
-          { n: "EAGLE", e: "🦅" },
-          { n: "PANDA", e: "🐼" },
-          { n: "KOALA", e: "🐨" },
-          { n: "CAMEL", e: "🐫" },
-          // Long (6+)
-          { n: "MONKEY", e: "🐵" },
-          { n: "RABBIT", e: "🐰" },
-          { n: "TURTLE", e: "🐢" },
-          { n: "SPIDER", e: "🕷️" },
-          { n: "DONKEY", e: "🫏" },
-          { n: "TURKEY", e: "🦃" },
-          { n: "LIZARD", e: "🦎" },
-          { n: "PARROT", e: "🦜" },
-          { n: "DOLPHIN", e: "🐬" },
-          { n: "PENGUIN", e: "🐧" },
-          { n: "GIRAFFE", e: "🦒" },
-          { n: "ELEPHANT", e: "🐘" },
-          { n: "KANGAROO", e: "🦘" },
-          { n: "SQUIRREL", e: "🐿️" },
-          { n: "GORILLA", e: "🦍" },
-          { n: "BUTTERFLY", e: "🦋" },
-          { n: "OCTOPUS", e: "🐙" },
-          { n: "CROCODILE", e: "🐊" },
-          { n: "FLAMINGO", e: "🦩" },
-          { n: "DINOSAUR", e: "🦖" },
-        ],
-        food: [
-          // Short
-          { n: "EGG", e: "🥚" },
-          { n: "PIE", e: "🥧" },
-          { n: "TEA", e: "🍵" },
-          { n: "NUT", e: "🥜" },
-          { n: "JAM", e: "🍯" },
-          // Med
-          { n: "CAKE", e: "🎂" },
-          { n: "KIWI", e: "🥝" },
-          { n: "CORN", e: "🌽" },
-          { n: "PEAR", e: "🍐" },
-          { n: "MILK", e: "🥛" },
-          { n: "MEAT", e: "🥩" },
-          { n: "RICE", e: "🍚" },
-          { n: "SOUP", e: "🍲" },
-          { n: "TACO", e: "🌮" },
-          { n: "BREAD", e: "🍞" },
-          { n: "APPLE", e: "🍎" },
-          { n: "LEMON", e: "🍋" },
-          { n: "SUSHI", e: "🍣" },
-          { n: "PIZZA", e: "🍕" },
-          { n: "DONUT", e: "🍩" },
-          { n: "CANDY", e: "🍬" },
-          { n: "FRUIT", e: "🍇" },
-          { n: "HONEY", e: "🍯" },
-          { n: "FRIES", e: "🍟" },
-          // Long
-          { n: "BANANA", e: "🍌" },
-          { n: "BURGER", e: "🍔" },
-          { n: "ORANGE", e: "🍊" },
-          { n: "TOMATO", e: "🍅" },
-          { n: "POTATO", e: "🥔" },
-          { n: "CARROT", e: "🥕" },
-          { n: "COOKIE", e: "🍪" },
-          { n: "CHEESE", e: "🧀" },
-          { n: "HOTDOG", e: "🌭" },
-          { n: "POPCORN", e: "🍿" },
-          { n: "CHICKEN", e: "🍗" },
-          { n: "AVOCADO", e: "🥑" },
-          { n: "NOODLES", e: "🍜" },
-          { n: "CUPCAKE", e: "🧁" },
-          { n: "SANDWICH", e: "🥪" },
-          { n: "CHOCOLATE", e: "🍫" },
-          { n: "STRAWBERRY", e: "🍓" },
-          { n: "WATERMELON", e: "🍉" },
-          { n: "SPAGHETTI", e: "🍝" },
-          { n: "PINEAPPLE", e: "🍍" },
-        ],
-        vehicles: [
-          // Short
-          { n: "BUS", e: "🚌" },
-          { n: "CAR", e: "🚗" },
-          { n: "JET", e: "✈️" },
-          { n: "VAN", e: "🚐" },
-          // Med
-          { n: "TAXI", e: "🚕" },
-          { n: "BIKE", e: "🚲" },
-          { n: "BOAT", e: "⛵" },
-          { n: "SHIP", e: "🚢" },
-          { n: "TRUCK", e: "🚚" },
-          { n: "TRAIN", e: "🚂" },
-          { n: "CANOE", e: "🛶" },
-          { n: "PLANE", e: "✈️" },
-          { n: "METRO", e: "🚇" },
-          // Long
-          { n: "ROCKET", e: "🚀" },
-          { n: "SCOOTER", e: "🛴" },
-          { n: "TRACTOR", e: "🚜" },
-          { n: "SAILBOAT", e: "⛵" },
-          { n: "MINIVAN", e: "🚐" },
-          { n: "AIRPLANE", e: "✈️" },
-          { n: "AMBULANCE", e: "🚑" },
-          { n: "FIRETRUCK", e: "🚒" },
-          { n: "POLICECAR", e: "🚓" },
-          { n: "HELICOPTER", e: "🚁" },
-          { n: "MOTORCYCLE", e: "🏍️" },
-          { n: "SUBMARINE", e: ",🚢" },
-        ],
-        space: [
-          // Short
-          { n: "SUN", e: "☀️" },
-          // Med
-          { n: "MOON", e: "🌙" },
-          { n: "STAR", e: "⭐" },
-          { n: "MARS", e: "🟠" },
-          { n: "UFO", e: "🛸" },
-          { n: "EARTH", e: "🌍" },
-          { n: "ALIEN", e: "👽" },
-          { n: "COMET", e: "☄️" },
-          { n: "VENUS", e: "🟡" },
-          // Long
-          { n: "SATURN", e: "🪐" },
-          { n: "URANUS", e: "🔵" },
-          { n: "PLANET", e: "🪐" },
-          { n: "GALAXY", e: "🌌" },
-          { n: "NEBULA", e: "🌫️" },
-          { n: "ROCKET", e: "🚀" },
-          { n: "METEOR", e: "🌠" },
-          { n: "JUPITER", e: "🟤" },
-          { n: "TELESCOPE", e: "🔭" },
-          { n: "SATELLITE", e: "🛰️" },
-          { n: "ASTRONAUT", e: "🧑‍🚀" },
-        ],
-        weather: [
-          // Short
-          { n: "SUN", e: "☀️" },
-          { n: "HOT", e: "🥵" },
-          { n: "FOG", e: "🌫️" },
-          { n: "ICE", e: "🧊" },
-          // Med
-          { n: "RAIN", e: "🌧️" },
-          { n: "SNOW", e: "❄️" },
-          { n: "WIND", e: "💨" },
-          { n: "COLD", e: "🥶" },
-          { n: "FIRE", e: "🔥" },
-          { n: "STORM", e: "⛈️" },
-          { n: "CLOUD", e: "☁️" },
-          // Long
-          { n: "THUNDER", e: "⚡" },
-          { n: "TORNADO", e: "🌪️" },
-          { n: "RAINBOW", e: "🌈" },
-          { n: "UMBRELLA", e: "☂️" },
-          { n: "LIGHTNING", e: "⚡" },
-          { n: "SNOWFLAKE", e: "❄️" },
-          { n: "SUNGLASSES", e: "🕶️" },
-        ],
-        emotions: [
-          // Short
-          { n: "SAD", e: "😢" },
-          { n: "MAD", e: "😡" },
-          { n: "JOY", e: "😁" },
-          { n: "ILL", e: "🤢" },
-          // Med
-          { n: "LOVE", e: "😍" },
-          { n: "COOL", e: "😎" },
-          { n: "SICK", e: "🤢" },
-          { n: "CALM", e: "😌" },
-          { n: "HAPPY", e: "😊" },
-          { n: "ANGRY", e: "😡" },
-          { n: "TIRED", e: "😴" },
-          { n: "SILLY", e: "🤪" },
-          { n: "BORED", e: "😐" },
-          { n: "QUIET", e: "🤫" },
-          // Long
-          { n: "SCARED", e: "😱" },
-          { n: "SHOCKED", e: "😲" },
-          { n: "SLEEPY", e: "😪" },
-          { n: "NERVOUS", e: "😬" },
-          { n: "EXCITED", e: "🤩" },
-          { n: "CONFUSED", e: "😕" },
-          { n: "SURPRISED", e: "😮" },
-          { n: "LAUGHING", e: "😂" },
-        ],
-      };
-
-      // --- GAME STATE ---
-      let difficulty = { min: 2, max: 3 }; // Default Tiny
-      let currentList = [];
-      let currentItem = {};
-      let filledSlots = [];
-      let score = 0;
-
-      // --- UI ELEMENTS ---
-      const menuScreen = document.getElementById("menuScreen");
-      const gameScreen = document.getElementById("gameScreen");
-      const gameTitle = document.getElementById("gameTitle");
-      const menuError = document.getElementById("menuError");
-      const emojiDiv = document.getElementById("emoji");
-      const slotsArea = document.getElementById("slotsArea");
-      const tilesArea = document.getElementById("tilesArea");
-      const msgDiv = document.getElementById("message");
-      const scoreSpan = document.getElementById("scoreVal");
-
-      // --- SETTINGS ---
-      function setDifficulty(min, max, btn) {
-        difficulty = { min, max };
-
-        // Update Buttons Visual
-        document
-          .querySelectorAll(".diff-btn")
-          .forEach((b) => b.classList.remove("selected"));
-        btn.classList.add("selected");
-        menuError.style.display = "none";
-      }
-
-      // --- START LOGIC ---
-      function startGame(category) {
-        // 1. Get List
-        const rawList = data[category];
-
-        // 2. Filter by Difficulty (Length)
-        currentList = rawList.filter((item) => {
-          const len = item.n.length;
-          // For the highest level (7+), max is arbitrarily high (20)
-          return len >= difficulty.min && len <= difficulty.max;
-        });
-
-        // 3. Validation
-        if (currentList.length === 0) {
-          menuError.style.display = "block";
-          return;
+        /* --- 1. Universal Reset & Layout --- */
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
 
-        // 4. Setup Game
-        gameTitle.innerText = category.toUpperCase();
-        score = 0;
-        scoreSpan.innerText = score;
-
-        menuScreen.classList.remove("active");
-        gameScreen.classList.add("active");
-        menuError.style.display = "none";
-
-        loadNewItem();
-      }
-
-      function goToMenu() {
-        gameScreen.classList.remove("active");
-        menuScreen.classList.add("active");
-      }
-
-      // --- GAMEPLAY ---
-      function loadNewItem() {
-        const randomIndex = Math.floor(Math.random() * currentList.length);
-        currentItem = currentList[randomIndex];
-        filledSlots = new Array(currentItem.n.length).fill(null);
-
-        // Reset Visuals
-        emojiDiv.innerText = currentItem.e;
-        emojiDiv.classList.remove("pop-anim");
-        void emojiDiv.offsetWidth;
-        msgDiv.innerText = "";
-
-        createLayout();
-      }
-
-      function createLayout() {
-        slotsArea.innerHTML = "";
-        tilesArea.innerHTML = "";
-
-        // Create Slots
-        for (let i = 0; i < currentItem.n.length; i++) {
-          let slot = document.createElement("div");
-          slot.className = "slot";
-          if (i === 0) slot.classList.add("active");
-          slot.onclick = () => undoSlot(i);
-          slotsArea.appendChild(slot);
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background-color: #f0f2f5;
+            color: #333;
+            /* Flex column + min-height: 100svh ensures full height on mobile
+               but allows scrolling if content overflows */
+            display: flex;
+            flex-direction: column;
+            min-height: 100svh; 
+            padding: 20px;
         }
 
-        // Create Scrambled Tiles
-        let lettersObj = currentItem.n.split("").map((char, index) => {
-          return { char: char, id: `tile-${index}` };
-        });
-
-        // Shuffle
-        for (let i = lettersObj.length - 1; i > 0; i--) {
-          const j = Math.floor(Math.random() * (i + 1));
-          [lettersObj[i], lettersObj[j]] = [lettersObj[j], lettersObj[i]];
+        /* Using margin: auto on the container centers it vertically when there is space,
+           but allows it to flow naturally (start at top) when scrolling is needed. */
+        .game-wrapper {
+            margin: auto;
+            width: 100%;
+            max-width: 640px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
-        lettersObj.forEach((obj) => {
-          let btn = document.createElement("button");
-          btn.className = "tile";
-          btn.innerText = obj.char;
-          btn.id = obj.id;
-          btn.onclick = () => useLetter(obj.id, obj.char);
-          tilesArea.appendChild(btn);
-        });
-      }
-
-      function useLetter(tileId, char) {
-        const emptyIndex = filledSlots.findIndex((item) => item === null);
-        if (emptyIndex !== -1) {
-          filledSlots[emptyIndex] = tileId;
-
-          // Update Slot
-          const slot = slotsArea.children[emptyIndex];
-          slot.innerText = char;
-          slot.classList.add("filled");
-          slot.classList.remove("active");
-
-          // Hide Tile
-          document.getElementById(tileId).classList.add("used");
-
-          // Move Highlight
-          if (emptyIndex + 1 < filledSlots.length) {
-            slotsArea.children[emptyIndex + 1].classList.add("active");
-          }
-          checkWin();
+        /* --- 2. Header & Controls --- */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
         }
-      }
 
-      function undoSlot(index) {
-        if (filledSlots[index] !== null) {
-          const tileId = filledSlots[index];
-          filledSlots[index] = null;
-
-          const slot = slotsArea.children[index];
-          slot.innerText = "";
-          slot.classList.remove("filled");
-
-          document.getElementById(tileId).classList.remove("used");
-          updateHighlights();
+        h1 {
+            font-size: 1.5rem;
+            margin: 0;
         }
-      }
 
-      function updateHighlights() {
-        Array.from(slotsArea.children).forEach((s) =>
-          s.classList.remove("active")
-        );
-        const firstEmpty = filledSlots.findIndex((item) => item === null);
-        if (firstEmpty !== -1)
-          slotsArea.children[firstEmpty].classList.add("active");
-      }
-
-      function checkWin() {
-        if (!filledSlots.includes(null)) {
-          let formedWord = "";
-          filledSlots.forEach(
-            (id) => (formedWord += document.getElementById(id).innerText)
-          );
-
-          if (formedWord === currentItem.n) {
-            score++;
-            scoreSpan.innerText = score;
-            msgDiv.className = "message correct-text";
-            msgDiv.innerText = "🌟 Correct! 🌟";
-            emojiDiv.classList.add("pop-anim");
-
-            // Disable tiles
-            Array.from(document.querySelectorAll(".tile")).forEach(
-              (b) => (b.disabled = true)
-            );
-            setTimeout(loadNewItem, 1500);
-          }
+        .stats {
+            font-size: 1.1rem;
+            color: #555;
         }
-      }
 
-      function resetRound() {
-        filledSlots.fill(null);
-        Array.from(slotsArea.children).forEach((s) => {
-          s.innerText = "";
-          s.className = "slot";
-        });
-        Array.from(tilesArea.children).forEach((t) =>
-          t.classList.remove("used")
-        );
-        updateHighlights();
-      }
-
-      function skipItem() {
-        msgDiv.className = "message";
-        msgDiv.style.color = "orange";
-        msgDiv.innerText = `It was ${currentItem.n}!`;
-        setTimeout(loadNewItem, 1500);
-      }
-
-      // Physical Keyboard Support
-      document.addEventListener("keydown", (e) => {
-        if (!gameScreen.classList.contains("active")) return;
-
-        const key = e.key.toUpperCase();
-        if (key === "BACKSPACE") {
-          for (let i = filledSlots.length - 1; i >= 0; i--) {
-            if (filledSlots[i] !== null) {
-              undoSlot(i);
-              break;
-            }
-          }
-        } else if (key.match(/^[A-Z]$/)) {
-          const tiles = Array.from(tilesArea.children);
-          const available = tiles.find(
-            (t) => t.innerText === key && !t.classList.contains("used")
-          );
-          if (available) useLetter(available.id, key);
+        button.restart-btn {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
         }
-      });
-    </script>
-  </body>
-</html>
+
+        button.restart-btn:hover { background-color: #2980b9; }
+        button.restart-btn:active { transform: scale(0.96); }
+
+        /* --- 3. Responsive Game Grid --- */
+        .grid-container {
+            display: grid;
+            /* Auto-fit columns: Minimum 80px wide, allow growth */
+            grid-template-columns: repeat(4, 1fr); 
+            gap: 12px;
+            width: 100%;
+            perspective: 1000px; /* Essential for 3D flip */
+        }
+
+        /* --- 4. The Card (Flip Logic) --- */
+        .card {
+            background-color: transparent;
+            aspect-ratio: 3/4; /* Maintains standard card shape */
+            cursor: pointer;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.6s cubic-bezier(0.4, 0.0, 0.2, 1);
+            -webkit-tap-highlight-color: transparent; /* Remove mobile tap gray box */
+        }
+
+        .card.flipped {
+            transform: rotateY(180deg);
+        }
+
+        .face {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            border-radius: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            backface-visibility: hidden; /* Hides the back when flipped */
+            -webkit-backface-visibility: hidden; /* Safari support */
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        /* Back of card (Pattern) */
+        .face.back {
+            background-color: #2c3e50;
+            background-image: 
+                radial-gradient(#34495e 15%, transparent 16%),
+                radial-gradient(#34495e 15%, transparent 16%);
+            background-size: 16px 16px;
+            background-position: 0 0, 8px 8px;
+            border: 2px solid #fff;
+        }
+
+        /* Front of card (White + Shape) */
+        .face.front {
+            background-color: white;
+            transform: rotateY(180deg);
+            border: 2px solid #ddd;
+        }
+
+        /* --- 5. Pure CSS Shapes --- */
+        .shape { display: block; }
+        
+        .square { width: 50%; height: 50%; background-color: #e74c3c; border-radius: 4px; }
+        
+        .circle { width: 55%; height: 55%; background-color: #3498db; border-radius: 50%; }
+        
+        .triangle {
+            width: 0; height: 0;
+            border-left: 25px solid transparent;
+            border-right: 25px solid transparent;
+            border-bottom: 45px solid #2ecc71;
+        }
+        
+        .diamond { width: 45%; height: 45%; background-color: #f1c40f; transform: rotate(45deg); border-radius: 4px;}
+
+        .hexagon {
+            width: 60%; height: 55%;
+            background-color: #9b59b6;
+            clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+        }
+
+        .cross {
+            background: #e67e22; height: 60%; width: 20%; position: relative; border-radius: 4px;
+        }
+        .cross:after {
+            content: ""; background: #e67e22; height: 33%; width: 300%; 
+            position: absolute; left: -100%; top: 33%; border-radius: 4px;
+        }
+
+        /* --- 6. Win Modal --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+            z-index: 100;
+        }
+        .modal-overlay.visible { opacity: 1; pointer-events: auto; }
+        
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            transform: translateY
