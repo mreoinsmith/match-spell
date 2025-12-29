@@ -29,12 +29,12 @@
         body {
             font-family: var(--font-main);
             background: var(--bg-gradient);
-            background-attachment: fixed; /* Keeps gradient nice during scroll */
+            background-attachment: fixed;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            min-height: 100dvh; /* Dynamic height for mobile address bars */
+            justify-content: center; /* Vertical centering */
+            min-height: 100dvh;
             padding: 20px;
             color: #333;
             -webkit-font-smoothing: antialiased;
@@ -56,9 +56,9 @@
             box-shadow: var(--shadow-soft);
             text-align: center;
             border: 6px solid var(--primary);
-            display: none; /* Hidden by default */
+            display: none;
             animation: slideIn 0.3s ease-out;
-            margin-bottom: 20px; /* Space for scrolling */
+            margin-bottom: 20px;
         }
 
         .screen.active {
@@ -69,8 +69,14 @@
         h1 {
             color: var(--accent);
             font-size: 2rem;
-            margin: 0 0 20px 0;
+            margin: 0 0 10px 0;
             line-height: 1.2;
+        }
+        
+        p.subtitle {
+            margin-top: 0;
+            color: #78909c;
+            font-size: 0.9rem;
         }
 
         h3 {
@@ -81,7 +87,7 @@
             letter-spacing: 1px;
         }
 
-        /* --- MENU: DIFFICULTY BUTTONS --- */
+        /* --- MENU: DIFFICULTY BUTTONS (MULTI-SELECT) --- */
         .difficulty-row {
             display: flex;
             justify-content: center;
@@ -91,7 +97,7 @@
         }
 
         .diff-btn {
-            flex: 1 1 45%; /* 2 per row on small screens */
+            flex: 1 1 45%;
             padding: 12px 10px;
             background: #f1f8e9;
             border: 2px solid #c5e1a5;
@@ -102,14 +108,26 @@
             transition: all 0.2s;
             font-size: 0.95rem;
             font-family: inherit;
+            position: relative;
         }
 
+        /* Selected State */
         .diff-btn.selected {
             background: #4fc3f7;
             color: white;
             border-color: #039be5;
             box-shadow: 0 4px 0 #0277bd;
             transform: translateY(-2px);
+        }
+        
+        /* Checkmark indicator for selected items */
+        .diff-btn.selected::after {
+            content: "✓";
+            position: absolute;
+            top: 5px;
+            right: 8px;
+            font-size: 1rem;
+            color: #fff;
         }
 
         /* --- MENU: CATEGORY GRID --- */
@@ -175,7 +193,6 @@
             box-shadow: 0 2px 0 #fbc02d;
         }
 
-        /* The Main Image */
         .emoji-display {
             font-size: 90px;
             margin: 10px 0 25px 0;
@@ -184,14 +201,16 @@
             user-select: none;
         }
 
+        /* --- SAFARI FIX: FLEX CENTERING --- */
         /* Answer Slots */
         .slots-container {
             display: flex;
             justify-content: center;
             flex-wrap: wrap;
             gap: 8px;
-            margin-bottom: 30px;
+            margin: 0 auto 30px auto; /* Auto margin fixes some centering issues */
             min-height: 60px;
+            max-width: 100%; /* Prevent overflow */
         }
 
         .slot {
@@ -208,6 +227,7 @@
             color: #333;
             cursor: pointer;
             transition: background-color 0.2s;
+            flex-shrink: 0; /* Prevent squishing */
         }
 
         .slot.filled {
@@ -223,14 +243,15 @@
             box-shadow: 0 0 8px #ffca28;
         }
 
-        /* Draggable/Clickable Tiles */
+        /* Draggable/Clickable Tiles - Safari Fix */
         .tiles-container {
             display: flex;
-            justify-content: center;
+            justify-content: center; /* Main centering logic */
             flex-wrap: wrap;
             gap: 10px;
-            margin-bottom: 25px;
+            margin: 0 auto 25px auto; /* Auto margins */
             min-height: 60px;
+            width: 100%; /* Ensure full width available */
         }
 
         .tile {
@@ -245,7 +266,13 @@
             font-weight: bold;
             cursor: pointer;
             font-family: inherit;
-            touch-action: manipulation; /* Improves touch response */
+            touch-action: manipulation;
+            flex-shrink: 0; /* Prevent shrinking */
+            
+            /* Explicit Flex alignment for Safari internals */
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .tile:active { transform: translateY(4px); border-bottom: 0; }
@@ -296,7 +323,7 @@
         }
         .pop-anim { animation: pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
 
-        /* --- MEDIA QUERIES FOR SMALL SCREENS --- */
+        /* --- MEDIA QUERIES --- */
         @media (max-width: 480px) {
             .screen { padding: 15px; }
             h1 { font-size: 1.6rem; }
@@ -304,8 +331,8 @@
             .emoji-display { font-size: 70px; margin-bottom: 15px; }
             
             .slot, .tile {
-                width: 38px;
-                height: 48px;
+                width: 40px;
+                height: 50px;
                 font-size: 22px;
                 border-bottom-width: 3px;
             }
@@ -324,13 +351,22 @@
 
     <div id="menuScreen" class="screen active">
         <h1>✨ Match & Spell ✨</h1>
+        <p class="subtitle">Select one or more levels to play!</p>
         
-        <h3>1. Pick Level</h3>
+        <h3>1. Pick Levels (Multi-Select)</h3>
         <div class="difficulty-row">
-            <button class="diff-btn selected" onclick="setDifficulty(0, 3, this)">Tiny<br>(2-3)</button>
-            <button class="diff-btn" onclick="setDifficulty(3, 5, this)">Little<br>(3-5)</button>
-            <button class="diff-btn" onclick="setDifficulty(5, 7, this)">Big<br>(5-7)</button>
-            <button class="diff-btn" onclick="setDifficulty(7, 20, this)">Super<br>(7+)</button>
+            <button class="diff-btn selected" data-min="0" data-max="3" onclick="toggleDifficulty(this)">
+                Tiny<br>(2-3)
+            </button>
+            <button class="diff-btn" data-min="3" data-max="5" onclick="toggleDifficulty(this)">
+                Little<br>(3-5)
+            </button>
+            <button class="diff-btn" data-min="5" data-max="7" onclick="toggleDifficulty(this)">
+                Big<br>(5-7)
+            </button>
+            <button class="diff-btn" data-min="7" data-max="20" onclick="toggleDifficulty(this)">
+                Super<br>(7+)
+            </button>
         </div>
 
         <h3>2. Pick Topic</h3>
@@ -343,7 +379,7 @@
             <button class="cat-btn c-emotions" onclick="startGame('emotions')"><span>😊</span>Feelings</button>
         </div>
 
-        <div id="menuError" class="error-msg">No words found for this level! Try another.</div>
+        <div id="menuError" class="error-msg">Please select at least one level and try again!</div>
     </div>
 
     <div id="gameScreen" class="screen">
@@ -435,7 +471,7 @@
     };
 
     // --- GAME STATE ---
-    let difficulty = { min: 0, max: 3 }; // Default to Tiny
+    let selectedLevels = []; // Array of objects {min: x, max: y}
     let currentList = [];
     let currentItem = {};
     let filledSlots = []; 
@@ -452,25 +488,50 @@
     const msgDiv = document.getElementById("message");
     const scoreSpan = document.getElementById("scoreVal");
 
-    // --- SETTINGS ---
-    function setDifficulty(min, max, btn) {
-        difficulty = { min, max };
-        document.querySelectorAll('.diff-btn').forEach(b => b.classList.remove('selected'));
-        btn.classList.add('selected');
+    // --- INIT ---
+    // Select first level by default on load
+    document.addEventListener('DOMContentLoaded', () => {
+        const firstBtn = document.querySelector('.diff-btn');
+        updateSelectedLevels();
+    });
+
+    // --- SETTINGS: Multi-Select Logic ---
+    function toggleDifficulty(btn) {
+        btn.classList.toggle('selected');
         menuError.style.display = 'none';
+        updateSelectedLevels();
     }
 
-    // --- INIT GAME ---
+    function updateSelectedLevels() {
+        selectedLevels = [];
+        const btns = document.querySelectorAll('.diff-btn.selected');
+        btns.forEach(btn => {
+            selectedLevels.push({
+                min: parseInt(btn.dataset.min),
+                max: parseInt(btn.dataset.max)
+            });
+        });
+    }
+
+    // --- GAME LOGIC ---
     function startGame(category) {
+        if (selectedLevels.length === 0) {
+            menuError.innerText = "Please select at least one level!";
+            menuError.style.display = 'block';
+            return;
+        }
+
         const rawList = data[category];
         
-        // Filter list based on word length
+        // Filter list: Check if word matches ANY of the selected ranges
         currentList = rawList.filter(item => {
             const len = item.n.length;
-            return len >= difficulty.min && len <= difficulty.max;
+            // Returns true if length fits in ANY selected range
+            return selectedLevels.some(range => len >= range.min && len <= range.max);
         });
 
         if (currentList.length === 0) {
+            menuError.innerText = "No words found for these levels! Try selecting others.";
             menuError.style.display = 'block';
             return;
         }
@@ -501,7 +562,7 @@
         
         emojiDiv.innerText = currentItem.e;
         emojiDiv.classList.remove("pop-anim");
-        void emojiDiv.offsetWidth; // Trigger reflow for animation
+        void emojiDiv.offsetWidth; 
         msgDiv.innerText = "";
         
         createLayout();
