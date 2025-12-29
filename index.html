@@ -3,22 +3,22 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Match & Spell</title>
+<title>Match & Spell: Multi-Level</title>
 
 <style>
 /* ================= RESET & THEME ================= */
 :root {
-    --bg: #f7f9fc;
+    --bg: #f0f4f8;
     --card: #ffffff;
     --primary: #4fc3f7;
     --primary-dark: #0288d1;
     --accent: #ff7043;
-    --text-main: #263238;
-    --text-muted: #607d8b;
+    --text-main: #37474f;
+    --text-muted: #78909c;
     --radius-lg: 24px;
     --radius-md: 16px;
     --radius-sm: 10px;
-    --shadow: 0 14px 34px rgba(0,0,0,0.08);
+    --shadow: 0 10px 30px rgba(0,0,0,0.08);
 }
 
 * {
@@ -30,7 +30,7 @@
 html, body {
     margin: 0;
     min-height: 100%;
-    background: radial-gradient(circle at top, #ffffff, #eef3f8);
+    background: radial-gradient(circle at top, #ffffff, #e3f2fd);
     color: var(--text-main);
 }
 
@@ -45,14 +45,16 @@ body {
 .game-wrapper {
     width: 100%;
     max-width: 600px;
+    margin: 0 auto;
 }
 
 .screen {
     display: none;
     background: var(--card);
-    padding: 28px;
+    padding: 24px;
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow);
+    border: 4px solid #e1f5fe;
     animation: fadeIn 0.3s ease;
 }
 
@@ -65,7 +67,7 @@ body {
     to { opacity: 1; transform: translateY(0); }
 }
 
-/* ================= HEADINGS ================= */
+/* ================= TYPOGRAPHY ================= */
 h1 {
     text-align: center;
     margin: 0 0 8px;
@@ -77,18 +79,19 @@ h1 {
     text-align: center;
     margin: 0 0 24px;
     color: var(--text-muted);
-    font-size: 1rem;
+    font-size: 0.95rem;
 }
 
 h3 {
-    margin: 22px 0 10px;
-    font-size: 0.95rem;
+    margin: 20px 0 10px;
+    font-size: 0.9rem;
     color: var(--text-muted);
     text-transform: uppercase;
-    letter-spacing: 0.06em;
+    letter-spacing: 0.05em;
+    font-weight: 700;
 }
 
-/* ================= MENU ================= */
+/* ================= MENU: LEVELS ================= */
 .difficulty-row {
     display: flex;
     gap: 10px;
@@ -100,12 +103,14 @@ h3 {
     flex: 1 1 45%;
     padding: 14px;
     border-radius: var(--radius-md);
-    border: 2px solid #e0e6ed;
-    background: #f8fafc;
+    border: 2px solid #cfd8dc;
+    background: #eceff1;
     font-weight: 700;
     cursor: pointer;
     transition: all 0.2s;
     font-size: 1rem;
+    position: relative;
+    color: var(--text-muted);
 }
 
 .diff-btn.selected {
@@ -116,37 +121,48 @@ h3 {
     box-shadow: 0 4px 0 var(--primary-dark);
 }
 
+/* Checkmark for selected */
+.diff-btn.selected::after {
+    content: "✓";
+    position: absolute;
+    top: 8px;
+    right: 10px;
+    font-size: 0.8rem;
+    opacity: 0.8;
+}
+
+/* ================= MENU: TOPICS ================= */
 .menu-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 12px;
 }
-
-@media (min-width: 400px) {
+@media (min-width: 450px) {
     .menu-grid { grid-template-columns: repeat(3, 1fr); }
 }
 
 .cat-btn {
     border-radius: var(--radius-lg);
     border: none;
-    padding: 20px 10px;
+    padding: 18px 10px;
     color: white;
     font-weight: 800;
     cursor: pointer;
-    transition: transform .12s ease;
+    transition: transform .1s ease;
     display: flex;
     flex-direction: column;
     align-items: center;
     font-size: 1rem;
+    box-shadow: 0 4px 0 rgba(0,0,0,0.1);
 }
 
 .cat-btn span {
     font-size: 2.2rem;
     display: block;
-    margin-bottom: 6px;
+    margin-bottom: 5px;
 }
 
-.cat-btn:active { transform: scale(0.96); }
+.cat-btn:active { transform: scale(0.96); box-shadow: none; }
 
 .c-animals { background:#ffca28; }
 .c-food { background:#ef5350; }
@@ -160,11 +176,11 @@ h3 {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 10px;
+    margin-bottom: 15px;
 }
 
 .back-btn {
-    background: #f1f5f9;
+    background: #eceff1;
     border: none;
     padding: 8px 16px;
     border-radius: var(--radius-sm);
@@ -183,20 +199,22 @@ h3 {
 
 .emoji-display {
     text-align: center;
-    font-size: 80px;
-    margin: 20px 0 30px;
+    font-size: 85px;
+    margin: 10px 0 30px;
     user-select: none;
     filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1));
 }
 
-/* Slots (Answer Area) */
+/* --- SAFARI CENTERING FIXES --- */
+/* Use flex-wrap with explicit center alignment */
 .slots-container {
     display: flex;
     justify-content: center;
     flex-wrap: wrap;
     gap: 8px;
-    margin-bottom: 30px;
+    margin: 0 auto 30px auto;
     min-height: 60px;
+    width: 100%;
 }
 
 .slot {
@@ -205,12 +223,13 @@ h3 {
     border-radius: var(--radius-md);
     background: #f1f5f9;
     border-bottom: 4px solid #cfd8dc;
-    display: flex;
+    display: inline-flex; /* Safari fix */
     align-items: center;
     justify-content: center;
     font-size: 28px;
     font-weight: 800;
     color: var(--text-main);
+    flex-shrink: 0; /* Prevent squishing */
 }
 
 .slot.filled {
@@ -219,13 +238,13 @@ h3 {
     color: var(--primary-dark);
 }
 
-/* Tiles (Keyboard) */
 .tiles-container {
     display: flex;
     justify-content: center;
-    gap: 10px;
     flex-wrap: wrap;
-    margin-bottom: 26px;
+    gap: 10px;
+    margin: 0 auto 26px auto;
+    width: 100%;
 }
 
 .tile {
@@ -240,6 +259,10 @@ h3 {
     color: #4e342e;
     cursor: pointer;
     touch-action: manipulation;
+    flex-shrink: 0; /* Prevent squishing */
+    display: inline-flex; /* Safari fix */
+    align-items: center;
+    justify-content: center;
 }
 
 .tile:active {
@@ -260,25 +283,34 @@ h3 {
 }
 
 .btn {
-    padding: 12px 24px;
+    padding: 12px 28px;
     border-radius: 999px;
     border: none;
     font-weight: 800;
     cursor: pointer;
     color: white;
     font-size: 1rem;
+    box-shadow: 0 4px 0 rgba(0,0,0,0.1);
 }
-
+.btn:active { transform: translateY(2px); box-shadow: none; }
 .btn-reset { background: #ffb74d; }
 .btn-skip { background: #b0bec5; }
 
 .message {
     text-align: center;
-    margin-top: 18px;
+    margin-top: 20px;
     height: 24px;
     font-size: 1.2rem;
     font-weight: 800;
     color: #2e7d32;
+}
+
+.error-msg {
+    color: #e53935;
+    text-align: center;
+    margin-top: 15px;
+    font-weight: bold;
+    display: none;
 }
 
 /* Animation */
@@ -297,9 +329,9 @@ h3 {
 
 <div id="menuScreen" class="screen active">
     <h1>✨ Match & Spell ✨</h1>
-    <p class="subtitle">Tap or type the letters to spell the word</p>
+    <p class="subtitle">Select levels and pick a topic!</p>
 
-    <h3>1. Select Level</h3>
+    <h3>1. Select Levels (Multi-Select)</h3>
     <div class="difficulty-row">
         <button class="diff-btn selected" data-min="2" data-max="3">Tiny (2-3)</button>
         <button class="diff-btn" data-min="4" data-max="5">Little (4-5)</button>
@@ -316,6 +348,8 @@ h3 {
         <button class="cat-btn c-weather" data-cat="weather"><span>🌧️</span>Sky</button>
         <button class="cat-btn c-emotions" data-cat="emotions"><span>😊</span>Feelings</button>
     </div>
+    
+    <div id="menuError" class="error-msg">Please select at least one level!</div>
 </div>
 
 <div id="gameScreen" class="screen">
@@ -340,7 +374,6 @@ h3 {
 
 <script>
 /* ================= DATA LIBRARY ================= */
-// Expanded to ensure every level has words
 const data = {
     animals:[
         {n:"CAT",e:"🐱"}, {n:"DOG",e:"🐶"}, {n:"PIG",e:"🐷"}, {n:"FOX",e:"🦊"},
@@ -380,7 +413,7 @@ const data = {
     ]
 };
 
-/* ================= STATE VARIABLES ================= */
+/* ================= STATE ================= */
 let currentList = [];
 let remainingItems = [];
 let currentItem = null;
@@ -388,7 +421,9 @@ let filledSlots = [];
 let score = 0;
 let roundLocked = false;
 let lastFilledIndex = -1;
-let currentDiff = { min: 2, max: 3 }; // Default Tiny
+
+// Stores array of active ranges: [{min:2, max:3}, {min:6, max:7}]
+let selectedLevels = []; 
 
 /* ================= DOM ELEMENTS ================= */
 const menuScreen = document.getElementById("menuScreen");
@@ -398,6 +433,7 @@ const slotsArea = document.getElementById("slotsArea");
 const tilesArea = document.getElementById("tilesArea");
 const msgDiv = document.getElementById("message");
 const scoreVal = document.getElementById("scoreVal");
+const menuError = document.getElementById("menuError");
 
 /* ================= UTILITY ================= */
 const shuffle = arr => {
@@ -408,22 +444,35 @@ const shuffle = arr => {
     return arr;
 };
 
-/* ================= MENU LOGIC ================= */
-// 1. Difficulty Selector
+/* ================= MENU LOGIC (MULTI-SELECT) ================= */
+// Initialize active levels on load based on HTML 'selected' class
+updateLevelState();
+
 document.querySelector(".difficulty-row").addEventListener("click", e => {
     const btn = e.target.closest(".diff-btn");
     if (!btn) return;
 
-    // Visual Update
-    document.querySelectorAll(".diff-btn").forEach(b => b.classList.remove("selected"));
-    btn.classList.add("selected");
+    // Toggle class
+    btn.classList.toggle("selected");
+    
+    // Hide error
+    menuError.style.display = "none";
 
-    // Logic Update
-    currentDiff.min = parseInt(btn.dataset.min);
-    currentDiff.max = parseInt(btn.dataset.max);
+    // Update internal state
+    updateLevelState();
 });
 
-// 2. Category Selector
+function updateLevelState() {
+    selectedLevels = [];
+    document.querySelectorAll(".diff-btn.selected").forEach(btn => {
+        selectedLevels.push({
+            min: parseInt(btn.dataset.min),
+            max: parseInt(btn.dataset.max)
+        });
+    });
+}
+
+// Category Listener
 document.querySelector(".menu-grid").addEventListener("click", e => {
     const btn = e.target.closest(".cat-btn");
     if (!btn) return;
@@ -432,16 +481,24 @@ document.querySelector(".menu-grid").addEventListener("click", e => {
 
 /* ================= GAME LOGIC ================= */
 function startGame(category) {
+    // 1. Check if any level selected
+    if (selectedLevels.length === 0) {
+        menuError.style.display = "block";
+        return;
+    }
+
     const rawList = data[category];
 
-    // Filter words based on selected level length
+    // 2. Filter words: Include word if it matches ANY selected range
     currentList = rawList.filter(item => {
         const len = item.n.length;
-        return len >= currentDiff.min && len <= currentDiff.max;
+        // Check if length fits in at least one active level range
+        return selectedLevels.some(range => len >= range.min && len <= range.max);
     });
 
+    // 3. Check if words exist for selection
     if (currentList.length === 0) {
-        alert("No words found for this level! Try a different one.");
+        alert("No words found for these levels! Try selecting different levels.");
         return;
     }
 
@@ -457,7 +514,6 @@ function loadNewItem() {
     roundLocked = false;
     lastFilledIndex = -1;
     
-    // Reset deck if empty
     if (!remainingItems.length) remainingItems = shuffle([...currentList]);
     
     currentItem = remainingItems.pop();
@@ -465,7 +521,7 @@ function loadNewItem() {
 
     emojiDiv.textContent = currentItem.e;
     emojiDiv.classList.remove("pop-anim");
-    void emojiDiv.offsetWidth; // Trigger reflow
+    void emojiDiv.offsetWidth; 
     emojiDiv.classList.add("pop-anim");
 
     msgDiv.textContent = "";
@@ -476,14 +532,14 @@ function buildUI() {
     slotsArea.innerHTML = "";
     tilesArea.innerHTML = "";
 
-    // Create Empty Slots
+    // Slots
     currentItem.n.split("").forEach(() => {
         const s = document.createElement("div");
         s.className = "slot";
         slotsArea.appendChild(s);
     });
 
-    // Create Shuffled Tiles
+    // Tiles
     shuffle(currentItem.n.split("")).forEach(char => {
         const b = document.createElement("button");
         b.className = "tile";
@@ -515,9 +571,11 @@ function useLetter(btn, char) {
 }
 
 function undoSlot() {
-    // Find the last filled slot
-    const i = filledSlots.lastIndexOf(null) === -1 ? filledSlots.length - 1 : filledSlots.indexOf(null) - 1;
-    
+    // Determine which slot to undo (last filled one)
+    let i = filledSlots.lastIndexOf(null);
+    if (i === -1) i = filledSlots.length - 1; // All full, undo last
+    else i = i - 1; // Undo the one before the first empty
+
     if (roundLocked || i < 0 || filledSlots[i] == null) return;
 
     const char = filledSlots[i];
@@ -527,7 +585,6 @@ function undoSlot() {
     slot.textContent = "";
     slot.classList.remove("filled");
 
-    // Find a used tile with the same letter and reactivate it
     const tile = [...tilesArea.children]
         .find(t => t.textContent === char && t.classList.contains("used"));
 
@@ -563,14 +620,12 @@ document.addEventListener("keydown", e => {
 
     const key = e.key.toUpperCase();
 
-    // Type letter (A-Z)
     if (/^[A-Z]$/.test(key)) {
         const tile = [...tilesArea.children]
             .find(t => t.textContent === key && !t.classList.contains("used"));
         if (tile) useLetter(tile, key);
     }
 
-    // Backspace
     if (e.key === "Backspace") {
         e.preventDefault();
         undoSlot();
