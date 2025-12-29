@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Mega Match & Spell</title>
+<title>Match & Spell</title>
 
 <style>
-/* ================= RESET & BASE ================= */
+/* ================= RESET & THEME ================= */
 :root {
     --bg: #f7f9fc;
     --card: #ffffff;
@@ -15,18 +15,28 @@
     --accent: #ff7043;
     --text-main: #263238;
     --text-muted: #607d8b;
-    --radius-lg: 22px;
-    --radius-md: 14px;
+    --radius-lg: 24px;
+    --radius-md: 16px;
     --radius-sm: 10px;
-    --shadow: 0 12px 30px rgba(0,0,0,0.08);
+    --shadow: 0 14px 34px rgba(0,0,0,0.08);
 }
 
-* { box-sizing: border-box; }
+/* Child-friendly font stack */
+* {
+    box-sizing: border-box;
+    font-family:
+        "Comic Sans MS",
+        "Comic Neue",
+        "Chalkboard SE",
+        "Baloo 2",
+        "Arial Rounded MT Bold",
+        system-ui,
+        sans-serif;
+}
 
 html, body {
     margin: 0;
     height: 100%;
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     background: radial-gradient(circle at top, #ffffff, #eef3f8);
     color: var(--text-main);
 }
@@ -41,7 +51,7 @@ body {
 /* ================= LAYOUT ================= */
 .game-wrapper {
     width: 100%;
-    max-width: 680px;
+    max-width: 700px;
 }
 
 .screen {
@@ -59,39 +69,39 @@ body {
 /* ================= HEADINGS ================= */
 h1 {
     text-align: center;
-    margin: 0 0 6px;
-    font-size: 2rem;
+    margin: 0 0 8px;
+    font-size: 2.2rem;
 }
 
 .subtitle {
     text-align: center;
     margin: 0 0 24px;
     color: var(--text-muted);
+    font-size: 1.1rem;
 }
 
 h3 {
-    margin: 20px 0 10px;
-    font-size: 1rem;
+    margin: 22px 0 10px;
+    font-size: 0.95rem;
     color: var(--text-muted);
     text-transform: uppercase;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.06em;
 }
 
 /* ================= MENU ================= */
 .difficulty-row {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(120px,1fr));
-    gap: 10px;
+    gap: 12px;
 }
 
 .diff-btn {
     padding: 14px;
     border-radius: var(--radius-md);
-    border: 1px solid #e0e6ed;
+    border: 2px solid #e0e6ed;
     background: #f8fafc;
-    font-weight: 600;
+    font-weight: 700;
     cursor: pointer;
-    transition: all .15s ease;
 }
 
 .diff-btn.selected {
@@ -102,8 +112,8 @@ h3 {
 
 .menu-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(120px,1fr));
-    gap: 14px;
+    grid-template-columns: repeat(auto-fit, minmax(130px,1fr));
+    gap: 16px;
 }
 
 .cat-btn {
@@ -111,20 +121,20 @@ h3 {
     border: none;
     padding: 18px 10px;
     color: white;
-    font-weight: 700;
+    font-weight: 800;
     cursor: pointer;
     transition: transform .12s ease, box-shadow .12s ease;
 }
 
 .cat-btn span {
-    font-size: 2.4rem;
+    font-size: 2.6rem;
     display: block;
     margin-bottom: 6px;
 }
 
 .cat-btn:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+    box-shadow: 0 10px 22px rgba(0,0,0,0.15);
 }
 
 .c-animals { background:#ffca28; }
@@ -148,20 +158,21 @@ h3 {
     padding: 8px 14px;
     border-radius: var(--radius-sm);
     cursor: pointer;
+    font-weight: 700;
 }
 
 .score-box {
     background: #fff8e1;
-    padding: 6px 14px;
+    padding: 6px 16px;
     border-radius: 999px;
-    font-weight: 700;
+    font-weight: 800;
 }
 
 /* ================= GAME CONTENT ================= */
 .emoji-display {
     text-align: center;
     font-size: 96px;
-    margin: 20px 0 30px;
+    margin: 22px 0 32px;
     user-select: none;
     will-change: transform;
 }
@@ -169,45 +180,44 @@ h3 {
 .slots-container {
     display: flex;
     justify-content: center;
-    gap: 10px;
-    margin-bottom: 28px;
+    gap: 12px;
+    margin-bottom: 30px;
 }
 
 .slot {
-    width: 52px;
-    height: 64px;
+    width: 56px;
+    height: 70px;
     border-radius: var(--radius-md);
     background: #f1f5f9;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 30px;
-    font-weight: 700;
+    font-size: 32px;
+    font-weight: 800;
 }
 
 .slot.filled {
     background: white;
-    box-shadow: inset 0 0 0 2px var(--primary);
+    box-shadow: inset 0 0 0 3px var(--primary);
 }
 
 .tiles-container {
     display: flex;
     justify-content: center;
-    gap: 12px;
+    gap: 14px;
     flex-wrap: wrap;
-    margin-bottom: 24px;
+    margin-bottom: 26px;
 }
 
 .tile {
-    width: 52px;
-    height: 64px;
+    width: 56px;
+    height: 70px;
     border-radius: var(--radius-md);
     background: #ffca28;
     border: none;
-    font-size: 28px;
-    font-weight: 700;
+    font-size: 30px;
+    font-weight: 800;
     cursor: pointer;
-    transition: transform .1s ease;
 }
 
 .tile:active {
@@ -223,35 +233,25 @@ h3 {
 .controls {
     display: flex;
     justify-content: center;
-    gap: 16px;
+    gap: 18px;
 }
 
 .btn {
-    padding: 12px 26px;
+    padding: 14px 28px;
     border-radius: 999px;
     border: none;
-    font-weight: 700;
+    font-weight: 800;
     cursor: pointer;
-    transition: transform .1s ease, box-shadow .1s ease;
 }
 
-.btn:hover {
-    transform: translateY(-1px);
-}
-
-.btn-reset {
-    background: #ffb74d;
-}
-
-.btn-skip {
-    background: #b0bec5;
-}
+.btn-reset { background: #ffb74d; }
+.btn-skip { background: #b0bec5; }
 
 .message {
     text-align: center;
     margin-top: 18px;
-    font-size: 1.2rem;
-    font-weight: 700;
+    font-size: 1.3rem;
+    font-weight: 800;
 }
 
 /* ================= ANIMATIONS ================= */
@@ -270,14 +270,14 @@ h3 {
 <!-- ================= MENU ================= -->
 <div id="menuScreen" class="screen active">
     <h1>✨ Match & Spell ✨</h1>
-    <p class="subtitle">Select one or more levels</p>
+    <p class="subtitle">Tap or type the letters to spell the word</p>
 
     <h3>Levels</h3>
     <div class="difficulty-row">
-        <button class="diff-btn selected" data-min="0" data-max="3">Tiny</button>
-        <button class="diff-btn" data-min="3" data-max="5">Little</button>
-        <button class="diff-btn" data-min="5" data-max="7">Big</button>
-        <button class="diff-btn" data-min="7" data-max="20">Super</button>
+        <button class="diff-btn selected" data-min="0">Tiny</button>
+        <button class="diff-btn" data-min="3">Little</button>
+        <button class="diff-btn" data-min="5">Big</button>
+        <button class="diff-btn" data-min="7">Super</button>
     </div>
 
     <h3>Topic</h3>
@@ -289,17 +289,12 @@ h3 {
         <button class="cat-btn c-weather" data-cat="weather"><span>🌧️</span>Sky</button>
         <button class="cat-btn c-emotions" data-cat="emotions"><span>😊</span>Feelings</button>
     </div>
-
-    <div id="menuError" style="color:red; display:none; margin-top:10px;">
-        Please select at least one level
-    </div>
 </div>
 
 <!-- ================= GAME ================= -->
 <div id="gameScreen" class="screen">
     <div class="header">
         <button class="back-btn" id="backBtn">« Back</button>
-        <span id="gameTitle"></span>
         <div class="score-box">⭐ <span id="scoreVal">0</span></div>
     </div>
 
@@ -320,22 +315,22 @@ h3 {
 <script>
 /* ================= DATA ================= */
 const data = {
-    animals:[{n:"CAT",e:"🐱"},{n:"DOG",e:"🐶"},{n:"LION",e:"🦁"},{n:"ELEPHANT",e:"🐘"}],
-    food:[{n:"PIZZA",e:"🍕"},{n:"APPLE",e:"🍎"},{n:"BANANA",e:"🍌"}],
-    vehicles:[{n:"CAR",e:"🚗"},{n:"BUS",e:"🚌"},{n:"ROCKET",e:"🚀"}],
-    space:[{n:"MOON",e:"🌙"},{n:"STAR",e:"⭐"},{n:"SATURN",e:"🪐"}],
+    animals:[{n:"CAT",e:"🐱"},{n:"DOG",e:"🐶"},{n:"LION",e:"🦁"}],
+    food:[{n:"PIZZA",e:"🍕"},{n:"APPLE",e:"🍎"}],
+    vehicles:[{n:"CAR",e:"🚗"},{n:"BUS",e:"🚌"}],
+    space:[{n:"MOON",e:"🌙"},{n:"STAR",e:"⭐"}],
     weather:[{n:"RAIN",e:"🌧️"},{n:"SNOW",e:"❄️"}],
     emotions:[{n:"HAPPY",e:"😊"},{n:"SAD",e:"😢"}]
 };
 
 /* ================= STATE ================= */
-let selectedLevels = [];
 let currentList = [];
 let remainingItems = [];
 let currentItem = null;
 let filledSlots = [];
 let score = 0;
 let roundLocked = false;
+let lastFilledIndex = -1;
 
 /* ================= DOM ================= */
 const menuScreen = document.getElementById("menuScreen");
@@ -356,14 +351,6 @@ const shuffle = arr => {
 };
 
 /* ================= MENU ================= */
-document.querySelector(".difficulty-row").addEventListener("click", e => {
-    const btn = e.target.closest(".diff-btn");
-    if (!btn) return;
-    btn.classList.toggle("selected");
-    selectedLevels = [...document.querySelectorAll(".diff-btn.selected")]
-        .map(b => ({min:+b.dataset.min, max:+b.dataset.max}));
-});
-
 document.querySelector(".menu-grid").addEventListener("click", e => {
     const btn = e.target.closest(".cat-btn");
     if (!btn) return;
@@ -372,7 +359,6 @@ document.querySelector(".menu-grid").addEventListener("click", e => {
 
 /* ================= GAME FLOW ================= */
 function startGame(category) {
-    if (!selectedLevels.length) return;
     currentList = data[category];
     remainingItems = shuffle([...currentList]);
     score = 0;
@@ -384,12 +370,15 @@ function startGame(category) {
 
 function loadNewItem() {
     roundLocked = false;
+    lastFilledIndex = -1;
     if (!remainingItems.length) remainingItems = shuffle([...currentList]);
     currentItem = remainingItems.pop();
     filledSlots = new Array(currentItem.n.length).fill(null);
+
     emojiDiv.textContent = currentItem.e;
     emojiDiv.classList.remove("pop-anim");
     requestAnimationFrame(() => emojiDiv.classList.add("pop-anim"));
+
     msgDiv.textContent = "";
     buildUI();
 }
@@ -397,59 +386,104 @@ function loadNewItem() {
 function buildUI() {
     slotsArea.innerHTML = "";
     tilesArea.innerHTML = "";
-    currentItem.n.split("").forEach((_,i)=>{
-        const s=document.createElement("div");
-        s.className="slot"+(i===0?" active":"");
-        s.onclick=()=>undoSlot(i);
+
+    currentItem.n.split("").forEach(() => {
+        const s = document.createElement("div");
+        s.className = "slot";
         slotsArea.appendChild(s);
     });
-    shuffle(currentItem.n.split("")).forEach((c,i)=>{
-        const b=document.createElement("button");
-        b.className="tile";
-        b.textContent=c;
-        b.onclick=()=>useLetter(b,c);
+
+    shuffle(currentItem.n.split("")).forEach(char => {
+        const b = document.createElement("button");
+        b.className = "tile";
+        b.textContent = char;
+        b.onclick = () => useLetter(b, char);
         tilesArea.appendChild(b);
     });
 }
 
-function useLetter(btn,char){
-    if(roundLocked) return;
-    const i=filledSlots.indexOf(null);
-    if(i<0) return;
-    filledSlots[i]=char;
-    slotsArea.children[i].textContent=char;
-    slotsArea.children[i].classList.add("filled");
-    btn.classList.add("used");
+function useLetter(btn, char) {
+    if (roundLocked) return;
+
+    const i = filledSlots.indexOf(null);
+    if (i < 0) return;
+
+    filledSlots[i] = char;
+    lastFilledIndex = i;
+
+    const slot = slotsArea.children[i];
+    slot.textContent = char;
+    slot.classList.add("filled");
+
+    if (btn) {
+        btn.classList.add("used");
+        btn.disabled = true;
+    }
+
     checkWin();
 }
 
-function undoSlot(i){
-    if(filledSlots[i]==null||roundLocked) return;
-    const char=filledSlots[i];
-    filledSlots[i]=null;
-    slotsArea.children[i].textContent="";
-    slotsArea.children[i].classList.remove("filled");
-    [...tilesArea.children].find(t=>t.textContent===char && t.classList.contains("used"))
-        ?.classList.remove("used");
+function undoSlot(i = lastFilledIndex) {
+    if (roundLocked || i < 0 || filledSlots[i] == null) return;
+
+    const char = filledSlots[i];
+    filledSlots[i] = null;
+
+    const slot = slotsArea.children[i];
+    slot.textContent = "";
+    slot.classList.remove("filled");
+
+    const tile = [...tilesArea.children]
+        .find(t => t.textContent === char && t.classList.contains("used"));
+
+    if (tile) {
+        tile.classList.remove("used");
+        tile.disabled = false;
+    }
+
+    lastFilledIndex = filledSlots.lastIndexOf(null) - 1;
 }
 
-function checkWin(){
-    if(filledSlots.includes(null)) return;
-    if(filledSlots.join("")===currentItem.n){
-        roundLocked=true;
-        scoreVal.textContent=++score;
-        msgDiv.textContent="🌟 Correct! 🌟";
-        setTimeout(loadNewItem,1500);
+function checkWin() {
+    if (filledSlots.includes(null)) return;
+
+    if (filledSlots.join("") === currentItem.n) {
+        roundLocked = true;
+        scoreVal.textContent = ++score;
+        msgDiv.textContent = "🌟 Correct! 🌟";
+        setTimeout(loadNewItem, 1500);
     }
 }
 
 /* ================= CONTROLS ================= */
-document.getElementById("resetBtn").onclick=()=>loadNewItem();
-document.getElementById("skipBtn").onclick=()=>setTimeout(loadNewItem,500);
-document.getElementById("backBtn").onclick=()=>{
+document.getElementById("resetBtn").onclick = loadNewItem;
+document.getElementById("skipBtn").onclick = loadNewItem;
+document.getElementById("backBtn").onclick = () => {
     gameScreen.classList.remove("active");
     menuScreen.classList.add("active");
 };
+
+/* ================= KEYBOARD SUPPORT ================= */
+document.addEventListener("keydown", e => {
+    if (!gameScreen.classList.contains("active")) return;
+    if (roundLocked) return;
+
+    const key = e.key.toUpperCase();
+
+    if (/^[A-Z]$/.test(key)) {
+        const tile = [...tilesArea.children]
+            .find(t => t.textContent === key && !t.classList.contains("used"));
+        if (tile) useLetter(tile, key);
+    }
+
+    if (e.key === "Backspace") {
+        e.preventDefault();
+        undoSlot();
+    }
+
+    if (e.key === "Enter") loadNewItem();
+    if (e.key === "Escape") loadNewItem();
+});
 </script>
 </body>
 </html>
