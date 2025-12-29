@@ -1,4 +1,4 @@
-# 🐾 Animal Match & Spell
+# Mega Match & Spell
 
 A fun, interactive, and educational web-based game designed to help young learners practice animal recognition and spelling. This project is a lightweight, single-file HTML application that works in any modern browser.
 
